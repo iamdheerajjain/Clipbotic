@@ -79,13 +79,10 @@ export async function POST(req) {
 
     const formData = await req.json();
 
-    console.log("Raw form data received:", formData);
-
     // Validate input data with more flexible validation
     let validatedData;
     try {
       validatedData = validateSchema(formData, videoGenerationSchema);
-      console.log("Validation passed:", validatedData);
     } catch (validationError) {
       console.error("Validation failed:", validationError.message);
       return NextResponse.json(
@@ -98,23 +95,9 @@ export async function POST(req) {
       );
     }
 
-    console.log("Received validated video generation request:", {
-      title: validatedData.title,
-      topic: validatedData.topic,
-      videoStyle: validatedData.videoStyle,
-      voice: validatedData.voice,
-      videoRecordId: validatedData.videoRecordId,
-      scriptLength: validatedData.script.length,
-    });
-
     // Send to Inngest for processing
     let result;
     try {
-      console.log("Sending to Inngest with data:", {
-        ...validatedData,
-        timestamp: new Date().toISOString(),
-      });
-
       result = await inngest.send({
         name: "generate-video-data",
         data: {
@@ -122,7 +105,6 @@ export async function POST(req) {
           timestamp: new Date().toISOString(),
         },
       });
-      console.log("Inngest event sent:", result);
     } catch (inngestError) {
       console.warn(
         "Inngest not configured, skipping background processing:",

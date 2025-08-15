@@ -24,12 +24,12 @@ export default function Hero() {
         <div className="space-y-4">
           <h1 className="text-5xl md:text-7xl font-extrabold leading-tight tracking-tight">
             <span className="bg-clip-text text-transparent bg-[linear-gradient(135deg,var(--brand-from),var(--brand-to))]">
-              Create Stunning Shorts
+              Create Stunning Short Videos
             </span>
           </h1>
           <p className="text-lg md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-            Generate cinematic, AI-crafted YouTube shorts in seconds with
-            premium visuals, voice, and captions.
+            Generate AI-crafted YouTube shorts in seconds with premium visuals,
+            voice and captions.
           </p>
         </div>
 
@@ -37,14 +37,12 @@ export default function Hero() {
           {!loading && (
             <>
               {!user ? (
-                // Show "Get Started" for non-authenticated users
                 <Authentication>
                   <Button size="lg" className="w-full sm:w-80 px-8">
                     Get Started
                   </Button>
                 </Authentication>
               ) : (
-                // Show "Go to Dashboard" for authenticated users
                 <Button
                   size="lg"
                   className="w-full sm:w-80 px-8"

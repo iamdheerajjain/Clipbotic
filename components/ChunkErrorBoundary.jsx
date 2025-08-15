@@ -27,7 +27,6 @@ class ChunkErrorBoundary extends Component {
       error.name === "ChunkLoadError" ||
       error.message.includes("ChunkLoadError")
     ) {
-      console.log("Attempting to reload page due to chunk loading error...");
       // Wait a bit before reloading to avoid infinite loops
       setTimeout(() => {
         window.location.reload();

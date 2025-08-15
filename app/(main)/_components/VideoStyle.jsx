@@ -39,7 +39,6 @@ function VideoStyle({
         await onDownload(videoData);
       }
     } catch (error) {
-      console.error("Download failed:", error);
       alert("Download failed. Please try again.");
     } finally {
       setIsDownloading(false);
@@ -76,10 +75,10 @@ function VideoStyle({
                 {isDownloading
                   ? "Rendering..."
                   : videoData.status === "ready"
-                    ? "Download MP4"
-                    : videoData.status === "partial"
-                      ? "Waiting for audio..."
-                      : "Not ready yet"}
+                  ? "Download MP4"
+                  : videoData.status === "partial"
+                  ? "Waiting for audio..."
+                  : "Not ready yet"}
               </button>
 
               <button
@@ -117,11 +116,7 @@ function VideoStyle({
               )}
             </div>
           </div>
-        ) : (
-          <div className="text-sm text-muted-foreground px-4 py-2 bg-gray-100 rounded-lg">
-            Generate a video first to download
-          </div>
-        )}
+        ) : null}
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">

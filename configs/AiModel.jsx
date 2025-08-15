@@ -1,9 +1,5 @@
-// This file should only be used on the server side
-// Client-side components should call API endpoints instead
-
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Server-side only - this will throw an error if imported on client
 if (typeof window !== "undefined") {
   throw new Error("AiModel.jsx cannot be imported on the client side");
 }

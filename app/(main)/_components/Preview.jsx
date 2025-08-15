@@ -2,18 +2,18 @@
 import React from "react";
 import Image from "next/image";
 
-// Caption styles mapping
+// Caption styles mapping - increased font sizes
 const captionStyles = {
   YouTuber:
-    "text-red-500 text-2xl font-black uppercase tracking-wider drop-shadow-lg px-4 py-2 rounded-xl bg-gradient-to-r from-red-500/20 to-orange-500/20 border border-red-500/30",
+    "text-red-500 text-3xl font-black uppercase tracking-wider drop-shadow-lg px-4 py-2 rounded-xl bg-gradient-to-r from-red-500/20 to-orange-500/20 border border-red-500/30",
   Supreme:
-    "text-white text-3xl font-bold italic tracking-wide drop-shadow-2xl px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 border-2 border-white/50",
-  Neon: "text-cyan-400 text-2xl font-extrabold uppercase tracking-widest drop-shadow-[0_0_20px_rgba(34,211,238,0.8)] px-4 py-2 rounded-lg bg-black/80 border border-cyan-400/60",
+    "text-white text-4xl font-bold italic tracking-wide drop-shadow-2xl px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 border-2 border-white/50",
+  Neon: "text-cyan-400 text-3xl font-extrabold uppercase tracking-widest drop-shadow-[0_0_20px_rgba(34,211,238,0.8)] px-4 py-2 rounded-lg bg-black/80 border border-cyan-400/60",
   Glitch:
-    "text-green-400 text-2xl font-mono font-bold tracking-tight drop-shadow-[2px_2px_0px_rgba(34,197,94,0.8)] px-4 py-2 rounded-md bg-black/90 border-2 border-green-400/70",
-  Fire: "text-orange-500 text-3xl font-black uppercase tracking-wide drop-shadow-[0_0_15px_rgba(249,115,22,0.6)] px-4 py-2 rounded-xl bg-gradient-to-r from-orange-500/30 to-red-500/30 border border-orange-400/50",
+    "text-green-400 text-3xl font-mono font-bold tracking-tight drop-shadow-[2px_2px_0px_rgba(34,197,94,0.8)] px-4 py-2 rounded-md bg-black/90 border-2 border-green-400/70",
+  Fire: "text-orange-500 text-4xl font-black uppercase tracking-wide drop-shadow-[0_0_15px_rgba(249,115,22,0.6)] px-4 py-2 rounded-xl bg-gradient-to-r from-orange-500/30 to-red-500/30 border border-orange-400/50",
   Futuristic:
-    "text-blue-400 text-2xl font-light uppercase tracking-[0.2em] drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border border-blue-400/40",
+    "text-blue-400 text-3xl font-light uppercase tracking-[0.2em] drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border border-blue-400/40",
 };
 
 export default function Preview({
@@ -38,7 +38,6 @@ export default function Preview({
     document.body.removeChild(link);
   };
 
-  // Video style options mapping
   const videoStyleOptions = {
     Realistic: "/realistic.png",
     Cinematic: "/cinematic.png",
@@ -86,7 +85,7 @@ export default function Preview({
                   className="object-cover"
                 />
                 {selectedCaption && captionStyles[selectedCaption] && (
-                  <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="absolute inset-0 flex items-end justify-center pb-8">
                     <span className={captionStyles[selectedCaption]}>
                       {selectedCaption}
                     </span>
@@ -94,7 +93,6 @@ export default function Preview({
                 )}
               </div>
             ) : placeholderImageUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={placeholderImageUrl}
                 alt={title}

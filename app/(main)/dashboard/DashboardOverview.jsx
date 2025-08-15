@@ -28,11 +28,9 @@ function DashboardOverview() {
   const { user } = useAuthContext();
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
-  // Allow Firebase UIDs as temporary IDs for immediate functionality
   const userId = user?.supabaseId || user?.uid;
   const videos = useGetUserVideos(userId);
 
-  // Delete mutation
   const [deleteVideo, { loading: deleteLoading }] = useDeleteVideo();
 
   if (!user) {

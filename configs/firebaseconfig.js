@@ -17,10 +17,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
-// Ensure auth state persists across reloads
 if (typeof window !== "undefined") {
   setPersistence(auth, browserLocalPersistence).catch(() => {
-    // ignore persistence errors and fall back to default
   });
 }
 

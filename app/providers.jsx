@@ -27,14 +27,11 @@ function AuthProvider({ children }) {
           setUser(immediate.user);
           setLoading(false);
         } else {
-          // Keep loading until Firebase confirms, to avoid false unauthenticated flashes
           setLoading(true);
         }
 
-        // Initialize Firebase listener (resolves after first auth state arrives)
         await authService.initialize();
 
-        // Sync state from service once initialized (in case first event fired before subscribe)
         const updatedUser = authService.getCurrentUser();
         if (updatedUser !== user) {
           setUser(updatedUser);

@@ -12,11 +12,9 @@ function RemotionPlayer({ videoData }) {
   const [error, setError] = useState(null);
   const [isReady, setIsReady] = useState(false);
 
-  // Use the performance optimization hook
   const { isOptimized, preloadProgress, audioRef } =
     useVideoPerformance(videoData);
 
-  // Memoize video data to prevent unnecessary re-renders
   const memoizedVideoData = useMemo(
     () => videoData,
     [
@@ -27,29 +25,11 @@ function RemotionPlayer({ videoData }) {
     ]
   );
 
-  // Debug logging for audio issues
-  useEffect(() => {
-    if (memoizedVideoData) {
-      console.log("Video data for player:", {
-        hasAudioURL: !!memoizedVideoData.audioURL,
-        audioURL: memoizedVideoData.audioURL,
-        audioURLType: typeof memoizedVideoData.audioURL,
-        hasImages: !!memoizedVideoData.images,
-        imageCount: Array.isArray(memoizedVideoData.images)
-          ? memoizedVideoData.images.length
-          : "unknown",
-        hasCaptions: !!memoizedVideoData.captionJson,
-      });
-    }
-  }, [memoizedVideoData]);
-
-  // Validate audio URL format
   const isValidAudioURL = useMemo(() => {
     if (!memoizedVideoData?.audioURL) return false;
 
     const url = memoizedVideoData.audioURL;
 
-    // Check if it's a valid URL
     try {
       new URL(url);
     } catch {
@@ -57,7 +37,6 @@ function RemotionPlayer({ videoData }) {
       return false;
     }
 
-    // Check if it's an audio file
     const audioExtensions = [".mp3", ".wav", ".ogg", ".m4a", ".aac", ".webm"];
     const hasAudioExtension = audioExtensions.some((ext) =>
       url.toLowerCase().includes(ext)
@@ -70,7 +49,6 @@ function RemotionPlayer({ videoData }) {
     return hasAudioExtension;
   }, [memoizedVideoData?.audioURL]);
 
-  // Set duration from optimized audio
   useEffect(() => {
     if (audioRef && audioRef.duration) {
       const frames = Math.ceil(audioRef.duration * FPS);
@@ -82,14 +60,12 @@ function RemotionPlayer({ videoData }) {
     }
   }, [audioRef]);
 
-  // Mark as ready when optimization is complete
   useEffect(() => {
     if (isOptimized && !isReady) {
       setIsReady(true);
     }
   }, [isOptimized, isReady]);
 
-  // Fallback duration calculation from captions if audio fails
   useEffect(() => {
     if (!audioRef && memoizedVideoData?.captionJson && !durationInFrames) {
       try {
@@ -105,7 +81,6 @@ function RemotionPlayer({ videoData }) {
             setDurationInFrames(duration);
             setError(null);
             setIsReady(true);
-            console.log("Using caption-based duration:", duration, "frames");
           }
         }
       } catch (error) {
@@ -116,17 +91,13 @@ function RemotionPlayer({ videoData }) {
     }
   }, [memoizedVideoData?.captionJson, audioRef, durationInFrames]);
 
-  // Additional fallback: use a default duration if nothing else works
   useEffect(() => {
     if (!durationInFrames && isOptimized && isReady) {
-      // Default to 10 seconds if no duration can be determined
       const defaultDuration = 10 * FPS; // 10 seconds at 30fps
       setDurationInFrames(defaultDuration);
-      console.log("Using default duration:", defaultDuration, "frames");
     }
   }, [durationInFrames, isOptimized, isReady]);
 
-  // Handle retry with cleanup
   const handleRetry = useCallback(() => {
     setRetryCount((prev) => prev + 1);
     setError(null);
@@ -134,7 +105,6 @@ function RemotionPlayer({ videoData }) {
     setIsReady(false);
   }, []);
 
-  // Don't render until we have a duration and are ready
   if (!durationInFrames || !isReady) {
     return (
       <div className="flex items-center justify-center h-64 bg-black rounded-lg">
@@ -150,14 +120,12 @@ function RemotionPlayer({ videoData }) {
     );
   }
 
-  // Show warning if no valid audio URL but allow playback
   if (!isValidAudioURL) {
     console.warn(
       "No valid audio URL found, but allowing video playback with captions only"
     );
   }
 
-  // Show error state if there's an error
   if (error) {
     return (
       <div className="flex items-center justify-center h-64 bg-black rounded-lg">
@@ -187,16 +155,12 @@ function RemotionPlayer({ videoData }) {
           videoData: memoizedVideoData,
           setDurationFrame: setDurationInFrames,
         }}
-        // Preload the composition for instant display
         preload="auto"
-        // Start paused to avoid autoplay issues
         autoPlay={false}
-        // Add error boundary for Remotion errors
         onError={(error) => {
           console.error("Remotion player error:", error);
           setError("Video playback error. Please try again.");
         }}
-        // Optimize for faster audio start
         renderLoading={() => (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
@@ -205,11 +169,9 @@ function RemotionPlayer({ videoData }) {
             </div>
           </div>
         )}
-        // Add performance optimizations
         showVolumeControls={true}
         allowFullscreen={true}
         clickToPlay={true}
-        // Reduce unnecessary re-renders
         key={`${memoizedVideoData?.audioURL}-${retryCount}`}
       />
     </div>

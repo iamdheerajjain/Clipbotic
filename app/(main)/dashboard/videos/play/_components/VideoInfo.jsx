@@ -20,7 +20,6 @@ function VideoInfo({ videoData }) {
         return;
       }
 
-      // Validate video data
       if (!videoData.audioURL) {
         alert(
           "Audio is not ready yet. Please wait for audio generation to complete."
@@ -38,7 +37,6 @@ function VideoInfo({ videoData }) {
         return;
       }
 
-      // Call the export API to render the video
       const response = await fetch("/api/export-video", {
         method: "POST",
         headers: {
@@ -71,14 +69,12 @@ function VideoInfo({ videoData }) {
         );
       }
 
-      // Get the video blob
       const blob = await response.blob();
 
       if (blob.size === 0) {
         throw new Error("Generated video file is empty");
       }
 
-      // Create download link
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -87,10 +83,8 @@ function VideoInfo({ videoData }) {
       link.click();
       document.body.removeChild(link);
 
-      // Clean up
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Download failed:", error);
       alert(
         `Download failed: ${error.message}\n\nPlease check the console for more details.`
       );

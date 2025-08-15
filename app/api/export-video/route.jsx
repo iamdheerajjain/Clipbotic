@@ -1,4 +1,4 @@
-// Force server-side only
+
 export const runtime = "nodejs";
 
 import { bundle } from "@remotion/bundler";
@@ -13,18 +13,6 @@ const unlink = promisify(fs.unlink);
 export async function POST(req) {
   try {
     const { videoData } = await req.json();
-    console.log("Video Data Received:", {
-      id: videoData?.id,
-      title: videoData?.title,
-      hasAudio: !!videoData?.audioURL,
-      hasImages: !!videoData?.images,
-      imageCount: Array.isArray(videoData?.images)
-        ? videoData.images.length
-        : 0,
-      hasCaptions: !!videoData?.captionJson,
-      audioURL: videoData?.audioURL,
-      videoStyle: videoData?.videoStyle,
-    });
 
     if (!videoData) {
       return new Response(JSON.stringify({ error: "Video data is required" }), {
@@ -33,7 +21,6 @@ export async function POST(req) {
       });
     }
 
-    // Validate that we have the necessary data
     if (!videoData.audioURL) {
       return new Response(
         JSON.stringify({ error: "No audio available for video" }),
@@ -57,25 +44,8 @@ export async function POST(req) {
       );
     }
 
-    console.log("Starting video rendering process...");
-    console.log("Video data validation passed:", {
-      hasAudio: !!videoData.audioURL,
-      hasImages: !!videoData.images,
-      imageCount: Array.isArray(videoData.images)
-        ? videoData.images.length
-        : "unknown",
-      hasCaptions: !!videoData.captionJson,
-      videoStyle: videoData.videoStyle,
-      script: videoData.script?.substring(0, 100) + "...",
-    });
-
-    // Bundle the Remotion composition
-    console.log("Bundling Remotion composition...");
     const bundled = await bundle(path.join(process.cwd(), "remotion/index.js"));
-    console.log("Bundle created successfully");
 
-    // Get the composition
-    console.log("Getting compositions...");
     const compositions = await getCompositions(bundled);
     const composition = compositions.find(
       (comp) => comp.id === "MyComposition"
@@ -85,9 +55,6 @@ export async function POST(req) {
       throw new Error("Composition 'MyComposition' not found");
     }
 
-    console.log("Composition found:", composition.id);
-
-    // Calculate duration based on content
     let durationInFrames = 30 * 25; // Default 25 seconds at 30fps
 
     if (videoData.audioURL) {
@@ -139,7 +106,7 @@ export async function POST(req) {
           },
         },
         onProgress: (progress) => {
-          console.log(`Rendering progress: ${Math.round(progress * 100)}%`);
+          // Progress logging removed
         },
       });
 

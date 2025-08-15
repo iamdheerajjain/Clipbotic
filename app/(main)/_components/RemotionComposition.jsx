@@ -16,12 +16,12 @@ import {
 const captionStyles = {
   YouTuber: {
     color: "#ef4444",
-    fontSize: "24px",
+    fontSize: "36px",
     fontWeight: "900",
     textTransform: "uppercase",
     letterSpacing: "0.1em",
     textShadow: "0 4px 6px rgba(0, 0, 0, 0.8)",
-    padding: "8px 16px",
+    padding: "12px 20px",
     borderRadius: "12px",
     background:
       "linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(249, 115, 22, 0.2))",
@@ -29,48 +29,48 @@ const captionStyles = {
   },
   Supreme: {
     color: "#ffffff",
-    fontSize: "30px",
+    fontSize: "42px",
     fontWeight: "700",
     fontStyle: "italic",
     letterSpacing: "0.05em",
     textShadow: "0 8px 16px rgba(0, 0, 0, 0.9)",
-    padding: "8px 16px",
+    padding: "12px 20px",
     borderRadius: "8px",
     background: "linear-gradient(135deg, #9333ea, #ec4899)",
     border: "2px solid rgba(255, 255, 255, 0.5)",
   },
   Neon: {
     color: "#22d3ee",
-    fontSize: "24px",
+    fontSize: "36px",
     fontWeight: "800",
     textTransform: "uppercase",
     letterSpacing: "0.2em",
     textShadow: "0 0 20px rgba(34, 211, 238, 0.8)",
-    padding: "8px 16px",
+    padding: "12px 20px",
     borderRadius: "8px",
     background: "rgba(0, 0, 0, 0.8)",
     border: "1px solid rgba(34, 211, 238, 0.6)",
   },
   Glitch: {
     color: "#22c55e",
-    fontSize: "24px",
+    fontSize: "36px",
     fontFamily: "monospace",
     fontWeight: "700",
     letterSpacing: "-0.02em",
     textShadow: "2px 2px 0px rgba(34, 197, 94, 0.8)",
-    padding: "8px 16px",
+    padding: "12px 20px",
     borderRadius: "6px",
     background: "rgba(0, 0, 0, 0.9)",
     border: "2px solid rgba(34, 197, 94, 0.7)",
   },
   Fire: {
     color: "#f97316",
-    fontSize: "30px",
+    fontSize: "42px",
     fontWeight: "900",
     textTransform: "uppercase",
     letterSpacing: "0.05em",
     textShadow: "0 0 15px rgba(249, 115, 22, 0.6)",
-    padding: "8px 16px",
+    padding: "12px 20px",
     borderRadius: "12px",
     background:
       "linear-gradient(135deg, rgba(249, 115, 22, 0.3), rgba(239, 68, 68, 0.3))",
@@ -78,12 +78,12 @@ const captionStyles = {
   },
   Futuristic: {
     color: "#60a5fa",
-    fontSize: "24px",
+    fontSize: "36px",
     fontWeight: "300",
     textTransform: "uppercase",
     letterSpacing: "0.2em",
     textShadow: "0 0 10px rgba(96, 165, 250, 0.5)",
-    padding: "8px 16px",
+    padding: "12px 20px",
     borderRadius: "50px",
     background:
       "linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(99, 102, 241, 0.2))",
@@ -91,7 +91,6 @@ const captionStyles = {
   },
 };
 
-// Preload images for better performance
 const preloadImages = (imageUrls) => {
   if (!Array.isArray(imageUrls)) return;
 
@@ -109,22 +108,6 @@ function RemotionComposition({ videoData, setDurationFrame }) {
   const [imageErrors, setImageErrors] = useState(new Set());
   const [imagesLoaded, setImagesLoaded] = useState(false);
 
-  // Debug logging
-  console.log("RemotionComposition received videoData:", {
-    hasVideoData: !!videoData,
-    audioURL: videoData?.audioURL,
-    imagesType: typeof videoData?.images,
-    imagesLength: Array.isArray(videoData?.images)
-      ? videoData.images.length
-      : "not array",
-    hasCaptions: !!videoData?.captionJson,
-    captionStyle: videoData?.caption?.style,
-    durationInFrames,
-    fps,
-    currentFrame: frame,
-  });
-
-  // Convert old word-based captions to new format
   const formatCaptionsFromWords = (words) => {
     if (!Array.isArray(words) || words.length === 0) {
       return [];
@@ -141,7 +124,6 @@ function RemotionComposition({ videoData, setDurationFrame }) {
     words.forEach((word, index) => {
       const wordText = word.word || word.punctuated_word || "";
 
-      // Add word to current caption
       currentCaption.words.push({
         word: wordText,
         start: word.start || 0,
@@ -151,20 +133,16 @@ function RemotionComposition({ videoData, setDurationFrame }) {
       currentCaption.text += wordText + " ";
       currentCaption.end = word.end || 0;
 
-      // Create new caption segment every 3-5 words or on punctuation
       const shouldSplit =
         wordText.match(/[.!?]$/) || // End of sentence
         currentCaption.words.length >= 5 || // Max 5 words per caption
         word.end - currentCaption.start > 3; // Max 3 seconds per caption
 
       if (shouldSplit && index < words.length - 1) {
-        // Clean up text (remove trailing space)
         currentCaption.text = currentCaption.text.trim();
 
-        // Add to captions array
         captions.push({ ...currentCaption });
 
-        // Start new caption
         const nextWord = words[index + 1];
         currentCaption = {
           text: "",
@@ -175,7 +153,6 @@ function RemotionComposition({ videoData, setDurationFrame }) {
       }
     });
 
-    // Add the last caption if it has content
     if (currentCaption.text.trim()) {
       currentCaption.text = currentCaption.text.trim();
       captions.push(currentCaption);
@@ -184,7 +161,6 @@ function RemotionComposition({ videoData, setDurationFrame }) {
     return captions;
   };
 
-  // Process captions for video player
   const captions = useMemo(() => {
     if (!videoData?.captionJson) return [];
 
@@ -208,7 +184,6 @@ function RemotionComposition({ videoData, setDurationFrame }) {
 
       return [];
     } catch (error) {
-      console.error("Error processing captions:", error);
       return [];
     }
   }, [videoData?.captionJson]);
@@ -244,7 +219,6 @@ function RemotionComposition({ videoData, setDurationFrame }) {
   const images = useMemo(() => {
     const raw = videoData?.images;
     if (!raw) {
-      console.log("No images data found");
       return [];
     }
 
@@ -257,11 +231,8 @@ function RemotionComposition({ videoData, setDurationFrame }) {
       } else if (typeof raw === "string") {
         processedImages = JSON.parse(raw);
       } else {
-        console.log("Unknown images format:", typeof raw);
         return [];
       }
-
-      console.log("Raw processed images:", processedImages);
 
       // Extract URLs from the processed data
       let imageUrls = [];
@@ -298,17 +269,13 @@ function RemotionComposition({ videoData, setDurationFrame }) {
         }
       }
 
-      console.log("Final image URLs:", imageUrls);
-
       // Ensure we have at least one image
       if (imageUrls.length === 0) {
-        console.warn("No valid image URLs found in:", processedImages);
         return [];
       }
 
       return imageUrls;
     } catch (error) {
-      console.error("Error processing images:", error);
       return [];
     }
   }, [videoData?.images]);
@@ -350,20 +317,11 @@ function RemotionComposition({ videoData, setDurationFrame }) {
   // Update parent duration if needed
   useEffect(() => {
     if (setDurationFrame && actualDurationNeeded > durationInFrames) {
-      console.log(
-        `Updating duration from ${durationInFrames} to ${actualDurationNeeded} frames`
-      );
       setDurationFrame(actualDurationNeeded);
     }
   }, [actualDurationNeeded, durationInFrames, setDurationFrame]);
 
-  // Debug logging for processed data
-  console.log("Processed images:", {
-    imageCount: images.length,
-    imageUrls: images,
-    framesPerImage,
-    actualDurationNeeded,
-  });
+  // Debug logging removed
 
   // Premium cinematic transitions with multiple effect types
   const getPremiumTransitionEffects = useCallback(
@@ -745,8 +703,7 @@ function RemotionComposition({ videoData, setDurationFrame }) {
           src={videoData.audioURL}
           volume={1}
           onError={(error) => {
-            console.error("Audio loading error in Remotion:", error);
-            console.error("Audio URL:", videoData.audioURL);
+            // Audio loading error handled silently
           }}
         />
       )}
@@ -843,9 +800,9 @@ function RemotionComposition({ videoData, setDurationFrame }) {
       <AbsoluteFill
         style={{
           color: "white",
-          justifyContent: "center",
-          alignItems: "flex-end",
-          paddingBottom: 60,
+          justifyContent: "flex-end",
+          alignItems: "center",
+          paddingBottom: 80,
           height: "100%",
           textAlign: "center",
           pointerEvents: "none", // Don't interfere with video controls
@@ -877,7 +834,7 @@ function RemotionComposition({ videoData, setDurationFrame }) {
               margin: 0,
               fontSize: selectedCaptionStyle
                 ? selectedCaptionStyle.fontSize
-                : "28px",
+                : "36px",
               fontWeight: selectedCaptionStyle
                 ? selectedCaptionStyle.fontWeight
                 : "600",

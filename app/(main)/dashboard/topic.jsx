@@ -50,9 +50,7 @@ function Topic({ onHandleInputChange, currentTopic = "" }) {
         return;
       }
 
-      console.log("Sending topic:", topic);
       const result = await axios.post("/api/generate-script", { topic });
-      console.log("Generated Scripts:", result.data);
       setScripts(result.data?.scripts || []);
     } catch (error) {
       console.error("Script generation failed:");

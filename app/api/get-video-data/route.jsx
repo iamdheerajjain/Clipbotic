@@ -6,7 +6,6 @@ import { supabaseService } from "@/lib/supabase-service";
 export async function POST(req) {
   try {
     const { videoId } = await req.json();
-    console.log("Fetching video data for ID:", videoId);
 
     if (!videoId) {
       return new Response(JSON.stringify({ error: "Video ID is required" }), {
@@ -15,7 +14,6 @@ export async function POST(req) {
       });
     }
 
-    // Fetch video data from Supabase
     const videoData = await supabaseService.getVideoById(videoId);
 
     if (!videoData) {
@@ -24,8 +22,6 @@ export async function POST(req) {
         headers: { "Content-Type": "application/json" },
       });
     }
-
-    // Determine video status
     let status = "generating";
     if (
       videoData.images &&
@@ -34,7 +30,7 @@ export async function POST(req) {
     ) {
       status = "ready";
     } else if (videoData.images && videoData.images.length > 0) {
-      status = "partial"; // Has images but no audio/captions yet
+      status = "partial"; 
     }
 
     const enhancedVideoData = {
@@ -45,18 +41,6 @@ export async function POST(req) {
       hasAudio: !!videoData.audio_url,
       hasCaptions: !!videoData.caption_json,
     };
-
-    console.log("Video data fetched successfully:", {
-      id: enhancedVideoData.id,
-      title: enhancedVideoData.title,
-      status: enhancedVideoData.status,
-      hasImages: enhancedVideoData.hasImages,
-      imageCount: Array.isArray(enhancedVideoData.images)
-        ? enhancedVideoData.images.length
-        : 0,
-      hasAudio: enhancedVideoData.hasAudio,
-      hasCaptions: enhancedVideoData.hasCaptions,
-    });
 
     return new Response(JSON.stringify({ videoData: enhancedVideoData }), {
       status: 200,

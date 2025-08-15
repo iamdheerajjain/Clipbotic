@@ -19,21 +19,10 @@ function PlayVideoPage() {
     try {
       setLoading(true);
       setError(null);
-      console.log("Fetching video data for ID:", videoId);
-
       const result = await supabaseService.getVideoById(videoId);
-      console.log("Video data fetched:", {
-        id: result?.id,
-        title: result?.title,
-        hasAudio: !!result?.audioURL,
-        hasImages: !!result?.images,
-        imageCount: Array.isArray(result?.images) ? result.images.length : 0,
-        hasCaptions: !!result?.captionJson,
-      });
 
       setVideoData(result);
     } catch (err) {
-      console.error("Failed to fetch video data:", err);
       setError(err.message);
     } finally {
       setLoading(false);

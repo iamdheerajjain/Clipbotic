@@ -2,14 +2,12 @@ import { useState, useEffect, useCallback } from "react";
 import { supabaseService } from "@/lib/supabase-service";
 import { supabase } from "@/configs/supabase";
 
-// Custom hook to replace useQuery
 export function useQuery(queryFn, args = {}, options = {}) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchData = useCallback(async () => {
-    // If no query function is provided (e.g., missing user/email), skip fetching
     if (!queryFn || typeof queryFn !== "function") {
       setData(null);
       setLoading(false);
@@ -30,8 +28,6 @@ export function useQuery(queryFn, args = {}, options = {}) {
 
   useEffect(() => {
     fetchData();
-
-    // Set up refetch interval if specified
     let interval;
     if (options.refetchInterval && options.refetchInterval > 0) {
       interval = setInterval(fetchData, options.refetchInterval);
@@ -47,7 +43,6 @@ export function useQuery(queryFn, args = {}, options = {}) {
   return data;
 }
 
-// Custom hook to replace useMutation
 export function useMutation(mutationFn) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -73,7 +68,6 @@ export function useMutation(mutationFn) {
   return [mutate, { loading, error }];
 }
 
-// Specific query hooks
 export function useGetAllUsers() {
   return useQuery(supabaseService.getAllUsers.bind(supabaseService));
 }
@@ -98,7 +92,6 @@ export function useGetUserVideos(userId) {
       setLoading(true);
       setError(null);
 
-      // Check cache first for instant response
       const cacheKey = `user_videos_${userId}`;
       const cachedData = localStorage.getItem(cacheKey);
 
@@ -107,19 +100,14 @@ export function useGetUserVideos(userId) {
           const parsed = JSON.parse(cachedData);
           const cacheAge = Date.now() - parsed.timestamp;
 
-          // Use cache if it's less than 5 minutes old
           if (cacheAge < 5 * 60 * 1000) {
-            console.log("Using cached videos data for instant display");
             setData(parsed.data);
             setLoading(false);
 
-            // Refresh in background
             setTimeout(async () => {
               try {
                 let freshData;
-                // If it's a Firebase UID (28 characters), use email-based approach
                 if (userId.length === 28) {
-                  // Get user email from auth context or localStorage
                   const currentUser = JSON.parse(
                     localStorage.getItem("currentUser") || "{}"
                   );
@@ -128,21 +116,17 @@ export function useGetUserVideos(userId) {
                       currentUser.email
                     );
                   } else {
-                    // Fallback to empty array for Firebase UIDs without email
                     freshData = [];
                   }
                 } else if (userId.length === 36) {
-                  // Use UUID-based approach for Supabase IDs
                   freshData = await supabaseService.getUserVideos(userId);
                 } else {
-                  // Invalid user ID format
                   console.warn("Invalid user ID format:", userId);
                   freshData = [];
                 }
 
                 if (freshData) {
                   setData(freshData);
-                  // Update cache
                   localStorage.setItem(
                     cacheKey,
                     JSON.stringify({
@@ -213,7 +197,6 @@ export function useGetUserVideos(userId) {
     fetchData();
   }, [fetchData]);
 
-  // Listen for cross-app video updates and refetch on demand
   useEffect(() => {
     const handleVideosUpdated = () => {
       fetchData();
@@ -228,7 +211,6 @@ export function useGetUserVideos(userId) {
     };
   }, [fetchData]);
 
-  // Realtime subscription to user's video changes (insert/update/delete)
   useEffect(() => {
     if (!userId || userId.length !== 36) return; // Realtime keyed by Supabase UUID only
 
@@ -260,26 +242,21 @@ export function useGetUserVideos(userId) {
   return data;
 }
 
-// Cache invalidation utilities
 export function invalidateUserVideosCache(userId) {
   if (userId) {
     const cacheKey = `user_videos_${userId}`;
     localStorage.removeItem(cacheKey);
-    console.log("Invalidated user videos cache for:", userId);
   }
 }
 
 export function invalidateAllVideosCache() {
-  // Remove all video-related cache entries
   Object.keys(localStorage).forEach((key) => {
     if (key.startsWith("user_videos_")) {
       localStorage.removeItem(key);
     }
   });
-  console.log("Invalidated all videos cache");
 }
 
-// Get cached videos data immediately (no waiting)
 export function getCachedUserVideos(userId) {
   if (!userId) return null;
 
@@ -304,7 +281,6 @@ export function getCachedUserVideos(userId) {
 }
 
 export function useGetVideosByEmail(email) {
-  // Only create the query function if email is provided
   const queryFn =
     email && email.trim()
       ? supabaseService.getVideosByEmail.bind(supabaseService)
@@ -314,7 +290,6 @@ export function useGetVideosByEmail(email) {
 }
 
 export function useGetVideoById(videoId) {
-  // Only create the query function if videoId is provided
   const queryFn =
     videoId && videoId.trim()
       ? supabaseService.getVideoById.bind(supabaseService)
@@ -324,7 +299,6 @@ export function useGetVideoById(videoId) {
 }
 
 export function useGetUserByEmail(email) {
-  // Only create the query function if email is provided
   const queryFn =
     email && email.trim()
       ? supabaseService.getUserByEmail.bind(supabaseService)
@@ -356,7 +330,6 @@ export function useCreateVideo() {
       setError(null);
       const result = await supabaseService.createVideo(videoData);
 
-      // Invalidate cache after successful creation
       if (result && videoData.userId) {
         invalidateUserVideosCache(videoData.userId);
       }

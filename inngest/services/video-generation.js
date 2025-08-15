@@ -12,8 +12,6 @@ if (!apiKey) {
 
 // Helper function to extract audio URL consistently
 function extractAudioURL(audioResponse) {
-  console.log("Extracting audio URL from response:", audioResponse);
-
   const possibleFields = [
     "audioUrl",
     "url",
@@ -25,8 +23,6 @@ function extractAudioURL(audioResponse) {
     "audio",
     "link",
     "href",
-    "result",
-    "data",
   ];
 
   for (const field of possibleFields) {
@@ -35,364 +31,179 @@ function extractAudioURL(audioResponse) {
       : audioResponse[field];
 
     if (value && typeof value === "string") {
-      console.log(`Found audio URL in field "${field}":`, value);
-
-      // Validate the URL
-      try {
-        const url = new URL(value);
-        console.log("Validated audio URL:", url.href);
-
-        // Check if it's an audio file
-        const audioExtensions = [
-          ".mp3",
-          ".wav",
-          ".ogg",
-          ".m4a",
-          ".aac",
-          ".webm",
-        ];
-        const hasAudioExtension = audioExtensions.some((ext) =>
-          url.pathname.toLowerCase().includes(ext)
-        );
-
-        if (hasAudioExtension) {
-          console.log("Audio URL has valid extension:", url.href);
-          return url.href;
-        } else {
-          console.warn(
-            "Audio URL doesn't have a recognized audio extension:",
-            url.href
-          );
-          // Still return it if it's a valid URL, as some APIs might not include extensions
-          return url.href;
-        }
-      } catch (urlError) {
-        console.warn(`Invalid URL format in field "${field}":`, value);
-        continue;
-      }
+      return value;
     }
   }
 
-  // Try to find any string that looks like a URL in the response
-  const responseString = JSON.stringify(audioResponse);
-  const urlMatch = responseString.match(/https?:\/\/[^\s"']+/);
-  if (urlMatch) {
-    console.log("Found URL-like string in response:", urlMatch[0]);
-    return urlMatch[0];
-  }
-
-  console.error("No valid audio URL found in response");
-  console.error("Response structure:", JSON.stringify(audioResponse, null, 2));
   return null;
 }
 
-// Audio generation service
-export class AudioService {
-  static async generateAudio(script, voice) {
-    try {
-      console.log("Generating audio...");
-
-      if (!script || !voice) {
-        throw new Error("Script and voice are required for audio generation");
-      }
-
-      const response = await axios.post(
-        `${BASE_URL}/api/text-to-speech`,
-        { input: script, voice },
-        {
-          headers: {
-            "x-api-key": apiKey,
-            "Content-Type": "application/json",
-          },
-          timeout: 120000, // 2 minutes
-        }
-      );
-
-      console.log("Audio generated successfully");
-      return response.data;
-    } catch (error) {
-      console.error(
-        "Audio generation error:",
-        error.response?.data || error.message
-      );
-      throw new Error(`Audio generation failed: ${error.message}`);
-    }
+// Helper function to validate audio URL
+function validateAudioURL(urlString) {
+  try {
+    const url = new URL(urlString);
+    const audioExtensions = [".mp3", ".wav", ".ogg", ".m4a", ".aac", ".webm"];
+    return audioExtensions.some((ext) =>
+      url.pathname.toLowerCase().includes(ext)
+    );
+  } catch {
+    return false;
   }
 }
 
-// Caption generation service
-export class CaptionService {
-  static async generateCaptions(audioURL) {
-    try {
-      if (!audioURL) {
-        throw new Error("Audio URL is required for caption generation");
+// Helper function to extract URL from text
+function extractURLFromText(text) {
+  const urlRegex = /https?:\/\/[^\s]+/g;
+  const urlMatch = text.match(urlRegex);
+  return urlMatch ? urlMatch[0] : null;
+}
+
+export async function generateAudio(script, voice) {
+  try {
+    const response = await fetch(
+      "https://api.elevenlabs.io/v1/text-to-speech",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "xi-api-key": process.env.ELEVENLABS_API_KEY,
+        },
+        body: JSON.stringify({
+          text: script,
+          model_id: "eleven_monolingual_v1",
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.5,
+          },
+        }),
       }
+    );
 
-      if (!process.env.DEEPGRAM_API_KEY) {
-        console.warn(
-          "DEEPGRAM_API_KEY environment variable is not set, skipping captions"
-        );
-        return [];
-      }
-
-      console.log("Generating captions from audio URL:", audioURL);
-
-      const deepgram = createClient(process.env.DEEPGRAM_API_KEY);
-      const { result, error } = await deepgram.listen.prerecorded.transcribeUrl(
-        { url: audioURL },
-        {
-          model: "nova-2",
-          punctuate: true,
-          diarize: false,
-          smart_format: true,
-        }
-      );
-
-      if (error) {
-        console.error("Deepgram error:", error);
-        throw new Error(`Caption generation failed: ${error.message}`);
-      }
-
-      const words = result.results?.channels[0]?.alternatives[0]?.words;
-      if (!words || words.length === 0) {
-        console.warn("No words found in transcription, using empty array");
-        return [];
-      }
-
-      // Format captions for video player - group words into sentences
-      const formattedCaptions = this.formatCaptionsForVideo(words);
-
-      console.log(
-        "Generated captions:",
-        formattedCaptions.length,
-        "caption segments"
-      );
-      return formattedCaptions;
-    } catch (error) {
-      console.error("Caption generation error:", error);
-      // Don't fail the entire process if captions fail
-      console.warn("Continuing without captions due to error");
-      return [];
-    }
-  }
-
-  // Format captions for video player
-  static formatCaptionsForVideo(words) {
-    if (!Array.isArray(words) || words.length === 0) {
-      return [];
+    if (!response.ok) {
+      throw new Error(`Audio generation failed: ${response.statusText}`);
     }
 
-    const captions = [];
-    let currentCaption = {
-      text: "",
-      start: words[0]?.start || 0,
-      end: 0,
-      words: [],
+    const audioBlob = await response.blob();
+    const audioURL = URL.createObjectURL(audioBlob);
+
+    return {
+      audioURL,
+      success: true,
     };
+  } catch (error) {
+    throw new Error(`Audio generation failed: ${error.message}`);
+  }
+}
 
-    words.forEach((word, index) => {
-      const wordText = word.word || word.punctuated_word || "";
-
-      // Add word to current caption
-      currentCaption.words.push({
-        word: wordText,
-        start: word.start || 0,
-        end: word.end || 0,
-      });
-
-      currentCaption.text += wordText + " ";
-      currentCaption.end = word.end || 0;
-
-      // Create new caption segment every 3-5 words or on punctuation
-      const shouldSplit =
-        wordText.match(/[.!?]$/) || // End of sentence
-        currentCaption.words.length >= 5 || // Max 5 words per caption
-        word.end - currentCaption.start > 3; // Max 3 seconds per caption
-
-      if (shouldSplit && index < words.length - 1) {
-        // Clean up text (remove trailing space)
-        currentCaption.text = currentCaption.text.trim();
-
-        // Add to captions array
-        captions.push({ ...currentCaption });
-
-        // Start new caption
-        const nextWord = words[index + 1];
-        currentCaption = {
-          text: "",
-          start: nextWord?.start || word.end || 0,
-          end: 0,
-          words: [],
-        };
+export async function generateCaptions(audioURL) {
+  try {
+    const response = await fetch(
+      "https://api.openai.com/v1/audio/transcriptions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          file: audioURL,
+          model: "whisper-1",
+          response_format: "verbose_json",
+          timestamp_granularities: ["word"],
+        }),
       }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Caption generation failed: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    return result.words || [];
+  } catch (error) {
+    throw new Error(`Caption generation failed: ${error.message}`);
+  }
+}
+
+export async function generateImagePrompts(script, videoStyle) {
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4",
+        messages: [
+          {
+            role: "system",
+            content: `You are an expert at creating image prompts for video generation. Create 5 detailed, cinematic image prompts based on the script and video style. Each prompt should be descriptive and suitable for AI image generation.`,
+          },
+          {
+            role: "user",
+            content: `Script: ${script}\nVideo Style: ${videoStyle}\n\nGenerate 5 image prompts that match the style and content.`,
+          },
+        ],
+        max_tokens: 500,
+        temperature: 0.7,
+      }),
     });
 
-    // Add the last caption if it has content
-    if (currentCaption.text.trim()) {
-      currentCaption.text = currentCaption.text.trim();
-      captions.push(currentCaption);
+    if (!response.ok) {
+      throw new Error(`Image prompt generation failed: ${response.statusText}`);
     }
 
-    return captions;
+    const result = await response.json();
+    const prompts = result.choices[0].message.content
+      .split("\n")
+      .filter((line) => line.trim())
+      .map((line) => line.replace(/^\d+\.\s*/, "").trim());
+
+    return prompts.slice(0, 5);
+  } catch (error) {
+    throw new Error(`Image prompt generation failed: ${error.message}`);
   }
 }
 
-// Image prompt generation service
-export class ImagePromptService {
-  static async generateImagePrompts(script, videoStyle) {
-    try {
-      console.log("Generating image prompts for style:", videoStyle);
+export async function generateImages(script, videoStyle, count = 5) {
+  try {
+    const prompts = await generateImagePrompts(script, videoStyle);
+    const validPrompts = prompts.filter((prompt) => prompt.length > 0);
 
-      const ImagePromptScript = `Generate Image Prompt of {style} style with all details for each scene for 30 seconds video : script: {script}
-- Just Give specifying image prompt depends on the story line
-- do not give camera angle image prompt
-- Follow the Following schema and return JSON data (Max 4-5 Images)
-[{
-  imagePrompt: '',
-  sceneContent: '<Script Content>'
-}]`;
-
-      const FINAL_PROMPT = ImagePromptScript.replace(
-        "{style}",
-        videoStyle
-      ).replace("{script}", script);
-
-      const result = await generateScript.sendMessage(FINAL_PROMPT);
-      const responseText = await result.response.text();
-
-      let resp;
-      try {
-        resp = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error("Failed to parse AI response:", responseText);
-        throw new Error("Invalid JSON response from AI model");
-      }
-
-      if (!Array.isArray(resp) || resp.length === 0) {
-        throw new Error("AI returned invalid or empty image prompts");
-      }
-
-      console.log("Parsed image prompts:", resp.length, "prompts");
-      return resp;
-    } catch (error) {
-      console.error("Image prompt generation error:", error);
-      throw new Error(`Image prompt generation failed: ${error.message}`);
-    }
-  }
-}
-
-// Image generation service
-export class ImageGenerationService {
-  static async generateImages(imagePrompts) {
-    try {
-      if (!Array.isArray(imagePrompts) || imagePrompts.length === 0) {
-        throw new Error("No valid image prompts available");
-      }
-
-      // Validate prompts
-      const validPrompts = imagePrompts.filter(
-        (prompt) =>
-          prompt?.imagePrompt && typeof prompt.imagePrompt === "string"
+    const imagePromises = validPrompts.map(async (prompt, index) => {
+      const response = await fetch(
+        "https://api.openai.com/v1/images/generations",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          },
+          body: JSON.stringify({
+            prompt: `${prompt}, ${videoStyle} style, cinematic, high quality, 16:9 aspect ratio`,
+            n: 1,
+            size: "1024x576",
+            quality: "standard",
+            response_format: "url",
+          }),
+        }
       );
 
-      if (validPrompts.length === 0) {
-        throw new Error("No valid image prompts found");
-      }
-
-      console.log(`Generating ${validPrompts.length} images...`);
-
-      // Process images with limited concurrency to avoid overwhelming the API
-      const images = [];
-      const batchSize = 2; // Process 2 images at a time
-
-      for (let i = 0; i < validPrompts.length; i += batchSize) {
-        const batch = validPrompts.slice(i, i + batchSize);
-
-        const batchResults = await Promise.all(
-          batch.map(async (element, batchIndex) => {
-            const globalIndex = i + batchIndex;
-            try {
-              console.log(
-                `Generating image ${globalIndex + 1}/${validPrompts.length}`
-              );
-
-              const requestBody = {
-                input: element.imagePrompt,
-                model: "sdxl",
-                width: 1024,
-                height: 1024,
-              };
-
-              let result;
-              try {
-                result = await axios.post(
-                  `${BASE_URL}/api/generate-image`,
-                  requestBody,
-                  {
-                    headers: {
-                      "x-api-key": apiKey,
-                      "Content-Type": "application/json",
-                    },
-                    timeout: 120000, // 2 minutes
-                  }
-                );
-              } catch (sdxlError) {
-                console.log(
-                  `SDXL failed for image ${globalIndex + 1}, trying DALL-E 3...`
-                );
-
-                result = await axios.post(
-                  `${BASE_URL}/api/generate-image`,
-                  {
-                    input: element.imagePrompt,
-                    model: "dall-e-3",
-                    size: "1024x1024",
-                  },
-                  {
-                    headers: {
-                      "x-api-key": apiKey,
-                      "Content-Type": "application/json",
-                    },
-                    timeout: 120000,
-                  }
-                );
-              }
-
-              if (!result.data?.image) {
-                console.error("Image response structure:", result.data);
-                throw new Error("No image URL in API response");
-              }
-
-              console.log(
-                `Image ${globalIndex + 1} generated successfully:`,
-                result.data.image
-              );
-              return result.data.image;
-            } catch (err) {
-              console.error(
-                `Failed to generate image ${globalIndex + 1}:`,
-                err.message
-              );
-              throw new Error(
-                `Image ${globalIndex + 1} generation failed: ${err.message}`
-              );
-            }
-          })
+      if (!response.ok) {
+        throw new Error(
+          `Image generation failed for prompt ${index + 1}: ${
+            response.statusText
+          }`
         );
-
-        images.push(...batchResults);
-
-        // Add delay between batches to respect rate limits
-        if (i + batchSize < validPrompts.length) {
-          await new Promise((resolve) => setTimeout(resolve, 2000));
-        }
       }
 
-      console.log("All images generated successfully:", images.length);
-      return images;
-    } catch (error) {
-      console.error("Image generation error:", error);
-      throw new Error(`Image generation failed: ${error.message}`);
-    }
+      const result = await response.json();
+      return result.data[0].url;
+    });
+
+    const images = await Promise.all(imagePromises);
+    return images.filter((url) => url);
+  } catch (error) {
+    throw new Error(`Image generation failed: ${error.message}`);
   }
 }

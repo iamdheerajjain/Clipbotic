@@ -85,7 +85,6 @@ export default function ProfileSettings() {
 
   const handleSave = () => {
     setIsEditing(false);
-    console.log("Profile updated:", profileData);
   };
 
   const handleCancel = () => {

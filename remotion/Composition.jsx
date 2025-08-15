@@ -26,23 +26,12 @@ export const MyComposition = ({ videoData }) => {
   // Ensure minimum duration of 25 seconds
   durationInFrames = Math.max(durationInFrames, 25 * 30);
 
-  console.log("MyComposition duration calculation:", {
-    imageCount: videoData?.images?.length || 0,
-    hasAudio: !!videoData?.audioURL,
-    scriptLength: videoData?.script?.split(" ").length || 0,
-    calculatedDuration: durationInFrames,
-    calculatedSeconds: durationInFrames / 30,
-  });
-
   return (
     <RemotionComposition
       videoData={videoData}
       setDurationFrame={(frames) => {
         // This will be called by the RemotionComposition to set the actual duration
         if (frames && frames > durationInFrames) {
-          console.log(
-            `MyComposition: Updating duration from ${durationInFrames} to ${frames} frames`
-          );
           durationInFrames = frames;
         }
       }}

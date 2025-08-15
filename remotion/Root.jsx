@@ -26,14 +26,6 @@ export const RemotionRoot = ({ videoData }) => {
   // Ensure minimum duration of 25 seconds
   durationInFrames = Math.max(durationInFrames, 25 * 30);
 
-  console.log("RemotionRoot duration calculation:", {
-    imageCount: videoData?.images?.length || 0,
-    hasAudio: !!videoData?.audioURL,
-    scriptLength: videoData?.script?.split(" ").length || 0,
-    calculatedDuration: durationInFrames,
-    calculatedSeconds: durationInFrames / 30,
-  });
-
   return (
     <>
       <Composition

@@ -11,7 +11,6 @@ function DashboardLayout({ children }) {
   const { user, loading } = useAuthContext();
   const [mounted, setMounted] = useState(false);
 
-  // Avoid hydration mismatch by rendering a stable placeholder until mounted
   useEffect(() => {
     setMounted(true);
   }, []);

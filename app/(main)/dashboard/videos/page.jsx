@@ -25,39 +25,31 @@ function VideosPage() {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [immediateVideos, setImmediateVideos] = useState(null);
 
-  // Allow Firebase UIDs as temporary IDs for immediate functionality
   const userId = user?.supabaseId || user?.uid;
   const videos = useGetUserVideos(userId);
 
-  // Delete mutation
   const [deleteVideo, { loading: deleteLoading }] = useDeleteVideo();
 
-  // Check for cached data immediately on mount
   useEffect(() => {
     if (userId) {
       const cachedVideos = getCachedUserVideos(userId);
       if (cachedVideos) {
         setImmediateVideos(cachedVideos);
-        console.log("Using cached videos for instant display");
       }
     }
   }, [userId]);
 
-  // Update immediate videos when fresh data arrives
   useEffect(() => {
     if (videos && videos !== immediateVideos) {
       setImmediateVideos(videos);
     }
   }, [videos, immediateVideos]);
 
-  // Use immediate videos if available, otherwise use fetched videos
   const displayVideos = immediateVideos || videos;
 
-  // Check if we're still loading (videos is null means loading, empty array means no videos)
   const isLoading = videos === null && !immediateVideos;
   const hasVideos = displayVideos && displayVideos.length > 0;
 
-  // Show loading state while fetching videos
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -113,7 +105,6 @@ function VideosPage() {
     try {
       await deleteVideo(deleteConfirm.id, userId);
       setDeleteConfirm(null);
-      // Optimistically remove from local state for instant UI feedback
       setImmediateVideos((prev) =>
         Array.isArray(prev)
           ? prev.filter((v) => v.id !== deleteConfirm.id)
