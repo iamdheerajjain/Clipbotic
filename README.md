@@ -1,4 +1,4 @@
-# 🎬 ShortVid - AI-Powered Short Video Generator
+# 🎬 Clipbotic - AI-Powered Short Video Generator
 
 Transform your ideas into stunning short videos with AI-powered generation. Create engaging content with custom styles, voices, and captions in minutes.
 
@@ -70,7 +70,7 @@ Transform your ideas into stunning short videos with AI-powered generation. Crea
 3. **Set up environment variables**
 
    ```bash
-   cp .env.example .env.local
+   cp .env.local
    ```
 
    Fill in your environment variables:
@@ -216,17 +216,11 @@ Script → Audio Generation → Caption Generation → Image Generation → Vide
 
 ## 🚀 Deployment
 
-### Vercel (Recommended)
+### Vercel
 
 1. Connect your GitHub repository to Vercel
 2. Set environment variables in Vercel dashboard
 3. Deploy automatically on push to main branch
-
-### Other Platforms
-
-- **Netlify**: Configure build settings for Next.js
-- **Railway**: Use Railway's Node.js template
-- **DigitalOcean App Platform**: Deploy as a Node.js app
 
 ### Production Considerations
 
@@ -236,39 +230,6 @@ Script → Audio Generation → Caption Generation → Image Generation → Vide
 - Configure CDN for video assets
 - Set up monitoring and logging
 
-## 🤝 Contributing
-
-We welcome contributions! Please follow these steps:
-
-1. **Fork the repository**
-2. **Create a feature branch**
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-3. **Make your changes**
-4. **Test thoroughly**
-5. **Commit your changes**
-   ```bash
-   git commit -m 'Add amazing feature'
-   ```
-6. **Push to the branch**
-   ```bash
-   git push origin feature/amazing-feature
-   ```
-7. **Open a Pull Request**
-
-### Development Guidelines
-
-- Follow the existing code style
-- Add tests for new features
-- Update documentation
-- Ensure all checks pass
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
 
 ### Common Issues
 
@@ -276,27 +237,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Slow generation**: Verify Inngest configuration
 - **Audio issues**: Ensure ElevenLabs API key is valid
 - **Database errors**: Check Supabase connection
-
-### Getting Help
-
-- 📧 **Email**: support@shortvid.com
-- 💬 **Discord**: [Join our community](https://discord.gg/shortvid)
-- 📖 **Documentation**: [docs.shortvid.com](https://docs.shortvid.com)
-- 🐛 **Issues**: [GitHub Issues](https://github.com/yourusername/shortvid/issues)
-
-## 🙏 Acknowledgments
-
-- **OpenAI** for GPT and DALL-E APIs
-- **ElevenLabs** for voice synthesis
-- **Remotion** for video generation framework
-- **Supabase** for backend infrastructure
-- **Inngest** for background job processing
-
----
-
-<div align="center">
-  <p>Made with ❤️ by the ShortVid team</p>
-  <p>
     <a href="https://shortvid.com">Website</a> •
     <a href="https://twitter.com/shortvid">Twitter</a> •
     <a href="https://discord.gg/shortvid">Discord</a>
