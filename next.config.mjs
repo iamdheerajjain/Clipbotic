@@ -151,7 +151,6 @@ const nextConfig = {
 
   // Experimental features for better performance
   experimental: {
-    optimizeCss: true,
     optimizePackageImports: ["lucide-react", "@radix-ui/react-icons"],
     // Better chunk loading
     webpackBuildWorker: true,
