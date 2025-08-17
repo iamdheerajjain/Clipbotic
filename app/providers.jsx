@@ -28,7 +28,6 @@ function AuthProvider({ children }) {
           setSigningIn(false); // Reset signing in state when auth state changes
         });
       } catch (error) {
-        console.error("Auth initialization error:", error);
         setLoading(false);
         setSigningIn(false);
       }

@@ -45,7 +45,7 @@ export default function Header() {
       await signOut(auth);
       router.push("/");
     } catch (error) {
-      console.error("Error signing out:", error);
+      // Silent error handling for sign out
     }
   };
 

@@ -46,10 +46,9 @@ function DashboardOverview() {
     {
       onSuccess: () => {
         // Invalidate and refetch videos after successful deletion
-        window.location.reload();
+        // The query will automatically refetch, no need for page reload
       },
       onError: (error) => {
-        console.error("Delete video error:", error);
         alert("Failed to delete video. Please try again.");
       },
     }
@@ -191,12 +190,6 @@ function DashboardOverview() {
   const handleDeleteConfirm = async () => {
     if (!deleteConfirm || !user) return;
 
-    console.log("Deleting video:", {
-      videoId: deleteConfirm.id,
-      userId: user._id || user.supabaseId,
-      user: user,
-    });
-
     try {
       await deleteVideo.mutate({
         videoId: deleteConfirm.id,
@@ -205,7 +198,6 @@ function DashboardOverview() {
       setDeleteConfirm(null);
       // Data will be automatically refetched by the query
     } catch (error) {
-      console.error("Error deleting video:", error);
       alert("Failed to delete video. Please try again.");
     }
   };
