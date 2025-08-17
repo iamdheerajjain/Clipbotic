@@ -42,7 +42,17 @@ function DashboardOverview() {
 
   // Delete mutation
   const deleteVideo = useSupabaseMutation(
-    supabaseService.deleteVideoData.bind(supabaseService)
+    supabaseService.deleteVideoData.bind(supabaseService),
+    {
+      onSuccess: () => {
+        // Invalidate and refetch videos after successful deletion
+        window.location.reload();
+      },
+      onError: (error) => {
+        console.error("Delete video error:", error);
+        alert("Failed to delete video. Please try again.");
+      },
+    }
   );
 
   if (!user) {
@@ -181,16 +191,22 @@ function DashboardOverview() {
   const handleDeleteConfirm = async () => {
     if (!deleteConfirm || !user) return;
 
+    console.log("Deleting video:", {
+      videoId: deleteConfirm.id,
+      userId: user._id || user.supabaseId,
+      user: user,
+    });
+
     try {
       await deleteVideo.mutate({
         videoId: deleteConfirm.id,
-        userId: user.id,
+        userId: user._id || user.supabaseId,
       });
       setDeleteConfirm(null);
       // Data will be automatically refetched by the query
     } catch (error) {
       console.error("Error deleting video:", error);
-      console.error("Failed to delete video. Please try again.");
+      alert("Failed to delete video. Please try again.");
     }
   };
 
