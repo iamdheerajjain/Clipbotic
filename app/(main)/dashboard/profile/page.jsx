@@ -15,12 +15,11 @@ import SectionHeader from "@/components/ui/section-header";
 import {
   UserIcon,
   MapPinIcon,
-  ClockIcon,
   GlobeIcon,
   EditIcon,
   CheckCircleIcon,
-  StarIcon,
   VideoIcon,
+  ClockIcon,
 } from "lucide-react";
 import Image from "next/image";
 import { useSupabaseQuery } from "@/hooks/use-supabase";
@@ -130,27 +129,6 @@ export default function ProfileSettings() {
     return Math.round((completed / fields.length) * 100);
   };
 
-  // Format member since date
-  const formatMemberSince = (timestamp) => {
-    if (!timestamp) return "Recently";
-    const date = new Date(timestamp);
-    const months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-    return `${months[date.getMonth()]} ${date.getFullYear()}`;
-  };
-
   if (!user) {
     return (
       <div className="text-center py-8">
@@ -251,29 +229,7 @@ export default function ProfileSettings() {
                   <div className="text-sm text-muted-foreground">
                     Videos Created
                   </div>
-                  {!isLoading && (
-                    <p className="text-xs text-muted-foreground/70 mt-1">
-                      Real-time from database
-                    </p>
-                  )}
                 </div>
-              </div>
-
-              <div className="pt-4 border-t border-white/10">
-                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                  <StarIcon className="w-4 h-4" />
-                  Member since{" "}
-                  {isLoading
-                    ? "Loading..."
-                    : userData
-                    ? formatMemberSince(userData.createdAt)
-                    : "Recently"}
-                </div>
-                {!isLoading && !userData && (
-                  <p className="text-xs text-muted-foreground/70 mt-1 text-center">
-                    Account created recently
-                  </p>
-                )}
               </div>
             </CardContent>
           </Card>

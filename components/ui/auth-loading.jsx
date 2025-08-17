@@ -4,13 +4,13 @@ import LoadingSpinner from "./LoadingSpinner";
 const AuthLoading = ({ message = "Signing you in..." }) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center space-y-6">
-        <div className="relative">
+      <div className="text-center space-y-6 relative z-10">
+        <div className="relative flex justify-center">
           {/* Background glow effect */}
-          <div className="absolute inset-0 blur-3xl bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-purple-500/20 rounded-full" />
+          <div className="absolute inset-0 blur-3xl bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-purple-500/20 rounded-full w-32 h-32" />
 
           {/* Main loading spinner */}
-          <div className="relative">
+          <div className="relative flex items-center justify-center w-32 h-32">
             <LoadingSpinner size="xl" className="text-purple-500" />
           </div>
         </div>
