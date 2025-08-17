@@ -1,36 +1,217 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🎬 Clipbotic - AI-Powered YouTube Shorts Generator
 
-## Getting Started
+> **Transform your ideas into stunning YouTube shorts in seconds with AI-powered video generation**
 
-First, run the development server:
+[![Next.js](https://img.shields.io/badge/Next.js-15.4.5-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.1.0-blue?style=flat-square&logo=react)](https://reactjs.org/)
+[![Remotion](https://img.shields.io/badge/Remotion-4.0.332-purple?style=flat-square)](https://remotion.dev/)
+[![Supabase](https://img.shields.io/badge/Supabase-2.39.0-green?style=flat-square&logo=supabase)](https://supabase.com/)
+[![Firebase](https://img.shields.io/badge/Firebase-12.1.0-orange?style=flat-square&logo=firebase)](https://firebase.google.com/)
+
+---
+
+## ✨ Features
+
+### 🎯 **AI-Powered Content Generation**
+
+- **Smart Script Writing** - Generate engaging scripts from any topic
+- **Premium Voiceovers** - Studio-grade voices with natural pacing
+- **Cinematic Visuals** - Auto-generated images in multiple art styles
+- **Smart Captions** - Auto-timed captions for maximum engagement
+
+### 🎨 **Multiple Video Styles**
+
+- **Realistic** - Photorealistic imagery
+- **Cinematic** - Movie-style aesthetics
+- **Anime** - Japanese animation style
+- **Watercolor** - Artistic watercolor effects
+- **Cyberpunk** - Futuristic neon aesthetics
+- **GTA** - Gaming-inspired visuals
+
+### 🚀 **One-Click Export**
+
+- **Vertical MP4** - Optimized for YouTube Shorts
+- **High Quality** - Professional-grade output
+- **Fast Rendering** - Powered by Remotion engine
+- **Instant Download** - No waiting, no queues
+
+---
+
+## 🛠️ Tech Stack
+
+### **Frontend**
+
+- **Next.js 15** - React framework with App Router
+- **React 19** - Latest React with concurrent features
+- **Tailwind CSS** - Utility-first CSS framework
+- **Radix UI** - Accessible component primitives
+
+### **Video Generation**
+
+- **Remotion** - Programmatic video creation
+- **Google Gemini AI** - Advanced script generation
+- **Deepgram** - High-quality text-to-speech
+- **AiguruLab** - AI-powered image generation
+
+### **Backend & Database**
+
+- **Supabase** - PostgreSQL database & real-time features
+- **Firebase Auth** - Google authentication
+- **Inngest** - Background job processing
+- **Vercel** - Serverless deployment
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+- Google Cloud account (for Gemini AI)
+- Supabase account
+- Firebase account
+
+### 1. Clone & Install
+
+```bash
+git clone https://github.com/yourusername/clipbotic.git
+cd clipbotic
+npm install
+```
+
+### 2. Environment Setup
+
+Create a `.env.local` file:
+
+```env
+# Google Gemini AI
+GEMINI_API_KEY=your_gemini_api_key
+
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+# Firebase
+NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_firebase_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_firebase_app_id
+
+# AiguruLab (Image Generation)
+AIGURULAB_API_KEY=your_aigurulab_api_key
+
+# Inngest (Background Jobs)
+INNGEST_EVENT_KEY=your_inngest_event_key
+INNGEST_SIGNING_KEY=your_inngest_signing_key
+```
+
+### 3. Database Setup
+
+Run the Supabase schema:
+
+```sql
+-- Copy and run the contents of supabase-schema-fixed.sql
+-- in your Supabase SQL editor
+```
+
+### 4. Start Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit [http://localhost:3000](http://localhost:3000) to see your app!
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📁 Project Structure
 
-## Learn More
+```
+clipbotic/
+├── app/                          # Next.js App Router
+│   ├── (main)/                   # Protected dashboard routes
+│   │   ├── dashboard/            # Main dashboard pages
+│   │   └── _components/          # Dashboard components
+│   ├── api/                      # API routes
+│   └── globals.css               # Global styles
+├── components/                   # Reusable components
+│   ├── ui/                       # UI component library
+│   └── home/                     # Landing page components
+├── hooks/                        # Custom React hooks
+├── lib/                          # Utility libraries
+├── configs/                      # Configuration files
+├── remotion/                     # Video composition
+├── inngest/                      # Background job functions
+└── public/                       # Static assets
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎥 How It Works
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 1. **Describe Your Idea**
 
-## Deploy on Vercel
+Enter a topic or idea - anything from "Space exploration" to "Cooking tutorials"
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 2. **AI Generates Content**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Script**: AI writes engaging, concise scripts
+- **Voice**: Choose from premium voice options
+- **Style**: Pick your visual aesthetic
+- **Captions**: Auto-generated with timing
+
+### 3. **Background Processing**
+
+- Images generated via AI
+- Audio synthesized from script
+- Captions timed to audio
+- Video composed with Remotion
+
+### 4. **Download & Share**
+
+- High-quality MP4 export
+- Optimized for YouTube Shorts
+- Ready to upload immediately
+
+---
+
+## 🔧 Development
+
+### Available Scripts
+
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+```
+
+### Video Development
+
+```bash
+# Start Remotion preview
+npx remotion preview
+
+# Render a video
+npx remotion render src/index.js MyComposition out.mp4
+```
+
+---
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+1. Connect your GitHub repository to Vercel
+2. Add environment variables in Vercel dashboard
+3. Deploy automatically on push to main
+
+### Manual Deployment
+
+```bash
+npm run build
+npm run start
+```

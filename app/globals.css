@@ -1,8 +1,72 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@custom-variant dark (&:is(.dark *));
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Performance optimizations for video playback */
+* {
+  /* Optimize for video rendering */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+}
+
+/* Optimize video player performance */
+[data-remotion-player="true"] {
+  /* Hardware acceleration for video playback */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  /* Optimize rendering */
+  will-change: transform;
+  /* Reduce paint operations */
+  contain: layout style paint;
+}
+
+/* Smooth transitions for video elements */
+video,
+img {
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  /* Optimize rendering */
+  will-change: transform;
+  /* Smooth scaling */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Optimize animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* Performance-friendly animations */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.2s ease-out;
 }
 
 @theme inline {
@@ -10,17 +74,589 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --radius: 0.875rem;
+  /* Light theme - White background with dark text */
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --card: rgba(255, 255, 255, 0.9);
+  --card-foreground: #1a1a1a;
+  --popover: rgba(255, 255, 255, 0.9);
+  --popover-foreground: #1a1a1a;
+  /* Purple spectrum */
+  --primary: #7c3aed; /* violet */
+  --primary-2: #a855f7; /* purple */
+  --primary-foreground: #ffffff;
+  --secondary: rgba(0, 0, 0, 0.06);
+  --secondary-foreground: #1a1a1a;
+  --muted: rgba(0, 0, 0, 0.05);
+  --muted-foreground: #6b7280;
+  --accent: #a78bfa;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --border: rgba(0, 0, 0, 0.08);
+  --input: rgba(0, 0, 0, 0.12);
+  --ring: #8b5cf6;
+  /* Charts */
+  --chart-1: #7c3aed;
+  --chart-2: #a855f7;
+  --chart-3: #c084fc;
+  --chart-4: #9333ea;
+  --chart-5: #6d28d9;
+  /* Sidebar */
+  --sidebar: rgba(255, 255, 255, 0.9);
+  --sidebar-foreground: #1a1a1a;
+  --sidebar-primary: #7c3aed;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(0, 0, 0, 0.06);
+  --sidebar-accent-foreground: #1a1a1a;
+  --sidebar-border: rgba(0, 0, 0, 0.08);
+  --sidebar-ring: #8b5cf6;
+  /* Brand gradient helpers */
+  --brand-from: var(--primary);
+  --brand-to: var(--primary-2);
+  --card-hover: rgba(124, 58, 237, 0.05);
+}
+
+.dark {
+  --background: #000000;
+  --foreground: #f4f1ff;
+  --card: rgba(10, 10, 10, 0.6);
+  --card-foreground: #f4f1ff;
+  --popover: rgba(10, 10, 10, 0.6);
+  --popover-foreground: #f4f1ff;
+  --primary: #8b5cf6;
+  --primary-2: #a855f7;
+  --primary-foreground: #0b0014;
+  --secondary: rgba(255, 255, 255, 0.06);
+  --secondary-foreground: #f4f1ff;
+  --muted: rgba(255, 255, 255, 0.05);
+  --muted-foreground: #b5acd6;
+  --accent: #a78bfa;
+  --accent-foreground: #0b0014;
+  --destructive: #f87171;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: #8b5cf6;
+  --chart-1: #8b5cf6;
+  --chart-2: #a855f7;
+  --chart-3: #c084fc;
+  --chart-4: #9333ea;
+  --chart-5: #6d28d9;
+  --sidebar: rgba(8, 8, 8, 0.55);
+  --sidebar-foreground: #f4f1ff;
+  --sidebar-primary: #8b5cf6;
+  --sidebar-primary-foreground: #0b0014;
+  --sidebar-accent: rgba(255, 255, 255, 0.06);
+  --sidebar-accent-foreground: #f4f1ff;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #8b5cf6;
+  --brand-from: var(--primary);
+  --brand-to: var(--primary-2);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background-image: radial-gradient(
+        1200px 600px at 80% -20%,
+        color-mix(in oklab, var(--brand-to) 24%, transparent),
+        transparent 65%
+      ),
+      radial-gradient(
+        900px 400px at -10% 10%,
+        color-mix(in oklab, var(--brand-from) 22%, transparent),
+        transparent 60%
+      );
+    background-repeat: no-repeat;
+    background-attachment: fixed;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out forwards;
+}
+
+/* Button hover glow effects */
+button,
+[onClick],
+[role="button"],
+.clickable,
+a,
+[href] {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+button:hover,
+[onClick]:hover,
+[role="button"]:hover,
+.clickable:hover,
+a:hover,
+[href]:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.4), 0 0 40px rgba(139, 92, 246, 0.3),
+    0 0 0 1px rgba(124, 58, 237, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+button:hover::before,
+[onClick]:hover::before,
+[role="button"]:hover::before,
+.clickable:hover::before,
+a:hover::before,
+[href]:hover::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+button:hover::before,
+[onClick]:hover::before,
+[role="button"]:hover::before,
+.clickable:hover::before,
+a:hover::before,
+[href]:hover::before {
+  left: 100%;
+}
+
+/* Button variant-specific hover effects */
+button[data-variant="default"]:hover,
+button[data-variant="default"]:focus {
+  background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%) !important;
+  color: black !important;
+  border-color: #7c3aed !important;
+}
+
+button[data-variant="outline"]:hover,
+button[data-variant="outline"]:focus {
+  background: linear-gradient(
+    135deg,
+    rgba(124, 58, 237, 0.1) 0%,
+    rgba(139, 92, 246, 0.1) 100%
+  ) !important;
+  border-color: #7c3aed !important;
+  color: black !important;
+}
+
+button[data-variant="destructive"]:hover,
+button[data-variant="destructive"]:focus {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%) !important;
+  color: black !important;
+  border-color: #dc2626 !important;
+  /* Red hover glow instead of purple */
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.45) !important,
+    0 0 40px rgba(239, 68, 68, 0.3) !important,
+    0 0 0 1px rgba(239, 68, 68, 0.15) !important,
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+button[data-variant="secondary"]:hover,
+button[data-variant="secondary"]:focus {
+  background: linear-gradient(
+    135deg,
+    rgba(124, 58, 237, 0.1) 0%,
+    rgba(139, 92, 246, 0.1) 100%
+  ) !important;
+  border-color: #7c3aed !important;
+  color: black !important;
+}
+
+button[data-variant="ghost"]:hover,
+button[data-variant="ghost"]:focus {
+  background: linear-gradient(
+    135deg,
+    rgba(124, 58, 237, 0.1) 0%,
+    rgba(139, 92, 246, 0.1) 100%
+  ) !important;
+  color: black !important;
+}
+
+button[data-variant="link"]:hover,
+button[data-variant="link"]:focus {
+  color: black !important;
+  text-decoration: underline !important;
+}
+
+/* Size-specific effects */
+button[data-size="sm"]:hover,
+button[size="sm"]:hover {
+  transform: translateY(-1px) scale(1.01) !important;
+}
+
+button[data-size="lg"]:hover,
+button[size="lg"]:hover {
+  transform: translateY(-3px) scale(1.03) !important;
+}
+
+/* Focus states for accessibility */
+button:focus,
+[onClick]:focus,
+[role="button"]:focus,
+.clickable:focus,
+a:focus,
+[href]:focus {
+  outline: 2px solid #7c3aed !important;
+  outline-offset: 2px !important;
+}
+
+/* Active state effects */
+button:active,
+[onClick]:active,
+[role="button"]:active,
+.clickable:active,
+a:active,
+[href]:active {
+  transform: translateY(0) scale(0.98) !important;
+  transition: all 0.1s ease !important;
+}
+
+/* Ensure consistent button colors */
+button[data-variant="default"] {
+  color: white !important;
+}
+
+button[data-variant="destructive"] {
+  color: white !important;
+}
+
+button[data-variant="outline"] {
+  color: var(--foreground) !important;
+}
+
+button[data-variant="secondary"] {
+  color: var(--secondary-foreground) !important;
+}
+
+button[data-variant="ghost"] {
+  color: var(--foreground) !important;
+}
+
+button[data-variant="link"] {
+  color: var(--primary) !important;
+}
+
+/* Enhanced clickable elements styling */
+[onClick] {
+  cursor: pointer !important;
+  user-select: none !important;
+}
+
+[onClick]:hover {
+  cursor: pointer !important;
+}
+
+/* Enhanced link styling for button-like links */
+a {
+  cursor: pointer !important;
+  text-decoration: none !important;
+}
+
+a:hover {
+  text-decoration: none !important;
+}
+
+/* Exclude sidebar header from hover effects */
+.SidebarHeader a:hover,
+.SidebarHeader a:focus,
+.SidebarHeader a:active,
+aside a:hover,
+aside a:focus,
+aside a:active {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.SidebarHeader a:hover::before,
+.SidebarHeader a:focus::before,
+.SidebarHeader a:active::before,
+aside a:hover::before,
+aside a:focus::before,
+aside a:active::before {
+  display: none !important;
+}
+
+/* More specific sidebar targeting */
+aside[class*="flex h-full w-72"] a:hover,
+aside[class*="flex h-full w-72"] a:focus,
+aside[class*="flex h-full w-72"] a:active {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+aside[class*="flex h-full w-72"] a:hover::before,
+aside[class*="flex h-full w-72"] a:focus::before,
+aside[class*="flex h-full w-72"] a:active::before {
+  display: none !important;
+}
+
+/* Remove focus effects from dashboard headers */
+main a:focus,
+main div:focus,
+main img:focus,
+main button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove focus effects from dashboard content */
+.animate-slide-up a:focus,
+.animate-slide-up div:focus,
+.animate-slide-up img:focus,
+.animate-slide-up button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove focus effects from SectionHeader and dashboard components */
+[class*="SectionHeader"]:focus,
+[class*="SectionHeader"] *:focus,
+[class*="dashboard"]:focus,
+[class*="dashboard"] *:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove focus effects from all dashboard page elements */
+div[class*="animate-slide-up"]:focus,
+div[class*="animate-slide-up"] *:focus,
+div[class*="animate-fade-in"]:focus,
+div[class*="animate-fade-in"] *:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Special handling for profile images and other clickable elements */
+img[onClick],
+div[onClick],
+span[onClick] {
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+img[onClick]:hover,
+div[onClick]:hover,
+span[onClick]:hover {
+  transform: translateY(-1px) scale(1.02) !important;
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.3), 0 0 30px rgba(139, 92, 246, 0.2) !important;
+}
+
+/* Enhanced glow for interactive elements */
+.interactive,
+.clickable {
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.interactive:hover,
+.clickable:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.4), 0 0 40px rgba(139, 92, 246, 0.3),
+    0 0 0 1px rgba(124, 58, 237, 0.1) !important;
+}
+
+/* Exclude header Dashboard button from heavy hover effects */
+header button:hover,
+header a:hover,
+header button:focus,
+header a:focus {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+header button:hover::before,
+header a:hover::before,
+header button:focus::before,
+header a:focus::before {
+  display: none !important;
+}
+
+/* Re-enable premium hover effects inside the header user dropdown */
+.header-dropdown button,
+.header-dropdown [onClick],
+.header-dropdown [role="button"],
+.header-dropdown a,
+.header-dropdown [href] {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.header-dropdown button:hover,
+.header-dropdown [onClick]:hover,
+.header-dropdown [role="button"]:hover,
+.header-dropdown a:hover,
+.header-dropdown [href]:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.4), 0 0 40px rgba(139, 92, 246, 0.3),
+    0 0 0 1px rgba(124, 58, 237, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.header-dropdown button:hover::before,
+.header-dropdown [onClick]:hover::before,
+.header-dropdown [role="button"]:hover::before,
+.header-dropdown a:hover::before,
+.header-dropdown [href]:hover::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.5s ease;
+  display: block !important;
+}
+
+.header-dropdown button:hover::before,
+.header-dropdown [onClick]:hover::before,
+.header-dropdown [role="button"]:hover::before,
+.header-dropdown a:hover::before,
+.header-dropdown [href]:hover::before {
+  left: 100%;
+}
+
+/* Force pure red glow for destructive actions across all element types */
+button[data-variant="destructive"]:hover,
+button[data-variant="destructive"]:focus,
+a[data-variant="destructive"]:hover,
+a[data-variant="destructive"]:focus,
+[href][data-variant="destructive"]:hover,
+[href][data-variant="destructive"]:focus,
+[onClick][data-variant="destructive"]:hover,
+[onClick][data-variant="destructive"]:focus,
+[role="button"][data-variant="destructive"]:hover,
+[role="button"][data-variant="destructive"]:focus,
+.clickable[data-variant="destructive"]:hover,
+.clickable[data-variant="destructive"]:focus {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.55) !important,
+    0 0 40px rgba(239, 68, 68, 0.35) !important,
+    0 0 0 1px rgba(239, 68, 68, 0.18) !important,
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Fast transitions for instant navigation */
+@layer utilities {
+  .transition-fast {
+    transition: all 0.1s ease-out;
+  }
+
+  .transition-instant {
+    transition: none;
+  }
+}
+
+/* Remove any slow animations */
+@layer base {
+  * {
+    transition-duration: 0.1s;
+  }
+
+  .animate-fade-in,
+  .animate-slide-up {
+    animation: none;
+  }
+}
+
+/* Video card grid consistency */
+@layer components {
+  .video-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    align-items: stretch;
+  }
+
+  .video-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .video-card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
 }
