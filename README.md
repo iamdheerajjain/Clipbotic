@@ -28,13 +28,6 @@
 - **Cyberpunk** - Futuristic neon aesthetics
 - **GTA** - Gaming-inspired visuals
 
-### 🚀 **One-Click Export**
-
-- **Vertical MP4** - Optimized for YouTube Shorts
-- **High Quality** - Professional-grade output
-- **Fast Rendering** - Powered by Remotion engine
-- **Instant Download** - No waiting, no queues
-
 ---
 
 ## 🛠️ Tech Stack
@@ -127,29 +120,6 @@ Visit [http://localhost:3000](http://localhost:3000) to see your app!
 
 ---
 
-## 📁 Project Structure
-
-```
-clipbotic/
-├── app/                          # Next.js App Router
-│   ├── (main)/                   # Protected dashboard routes
-│   │   ├── dashboard/            # Main dashboard pages
-│   │   └── _components/          # Dashboard components
-│   ├── api/                      # API routes
-│   └── globals.css               # Global styles
-├── components/                   # Reusable components
-│   ├── ui/                       # UI component library
-│   └── home/                     # Landing page components
-├── hooks/                        # Custom React hooks
-├── lib/                          # Utility libraries
-├── configs/                      # Configuration files
-├── remotion/                     # Video composition
-├── inngest/                      # Background job functions
-└── public/                       # Static assets
-```
-
----
-
 ## 🎥 How It Works
 
 ### 1. **Describe Your Idea**
@@ -180,15 +150,6 @@ Enter a topic or idea - anything from "Space exploration" to "Cooking tutorials"
 
 ## 🔧 Development
 
-### Available Scripts
-
-```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-```
-
 ### Video Development
 
 ```bash
@@ -213,5 +174,9 @@ npx remotion render src/index.js MyComposition out.mp4
 
 ```bash
 npm run build
-npm run start
+npm run dev
+npx inngest-cli@latest dev
 ```
+![op1](op1.png)
+![op2](op2.png)
+![op1](op3.png)
