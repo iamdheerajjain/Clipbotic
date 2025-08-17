@@ -140,12 +140,6 @@ Enter a topic or idea - anything from "Space exploration" to "Cooking tutorials"
 - Captions timed to audio
 - Video composed with Remotion
 
-### 4. **Download & Share**
-
-- High-quality MP4 export
-- Optimized for YouTube Shorts
-- Ready to upload immediately
-
 ---
 
 ## 🔧 Development
