@@ -7,6 +7,7 @@ const AuthContext = createContext();
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [signingIn, setSigningIn] = useState(false);
 
   useEffect(() => {
     let unsubscribe;
@@ -24,10 +25,12 @@ function AuthProvider({ children }) {
         unsubscribe = authService.onAuthStateChanged((user) => {
           setUser(user);
           setLoading(false);
+          setSigningIn(false); // Reset signing in state when auth state changes
         });
       } catch (error) {
         console.error("Auth initialization error:", error);
         setLoading(false);
+        setSigningIn(false);
       }
     };
 
@@ -41,12 +44,23 @@ function AuthProvider({ children }) {
     };
   }, []);
 
+  const handleSignIn = async () => {
+    setSigningIn(true);
+    try {
+      await authService.signInWithGoogle();
+    } catch (error) {
+      setSigningIn(false);
+      throw error;
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
         user,
         loading,
-        signIn: authService.signInWithGoogle.bind(authService),
+        signingIn,
+        signIn: handleSignIn,
         signOut: authService.signOut.bind(authService),
         isAuthenticated: authService.isAuthenticated.bind(authService),
         hasPermission: authService.hasPermission.bind(authService),

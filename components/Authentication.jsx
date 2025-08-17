@@ -2,17 +2,16 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { useAuthContext } from "@/app/providers";
 import { withErrorHandling } from "@/lib/error-handler";
 
 export default function Authentication({ children }) {
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
-  const { signIn } = useAuthContext();
+  const { signIn, signingIn } = useAuthContext();
 
   const handleSignIn = withErrorHandling(async () => {
-    setIsLoading(true);
     setError(null);
 
     try {
@@ -21,8 +20,6 @@ export default function Authentication({ children }) {
       router.push("/dashboard");
     } catch (error) {
       setError(error.message);
-    } finally {
-      setIsLoading(false);
     }
   });
 
@@ -30,8 +27,15 @@ export default function Authentication({ children }) {
     <div className="relative">
       {React.cloneElement(children, {
         onClick: handleSignIn,
-        disabled: isLoading,
-        children: isLoading ? "Signing in..." : children.props.children,
+        disabled: signingIn,
+        children: signingIn ? (
+          <div className="flex items-center gap-2">
+            <LoadingSpinner size="sm" />
+            <span>Signing in...</span>
+          </div>
+        ) : (
+          children.props.children
+        ),
       })}
 
       {error && (

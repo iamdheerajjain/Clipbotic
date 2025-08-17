@@ -3,20 +3,21 @@ import React, { useState } from "react";
 import AppSidebar from "./_components/AppSidebar";
 import { useAuthContext } from "@/app/providers";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import AuthLoading from "@/components/ui/auth-loading";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ToastContainer, useToast } from "@/components/ui/toast";
 
 function DashboardLayout({ children }) {
-  const { user, loading } = useAuthContext();
+  const { user, loading, signingIn } = useAuthContext();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { toasts, removeToast } = useToast();
 
-  if (loading) {
+  if (loading || signingIn) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner size="xl" />
-      </div>
+      <AuthLoading
+        message={signingIn ? "Setting up your account..." : "Loading..."}
+      />
     );
   }
 
