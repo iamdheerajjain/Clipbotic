@@ -14,11 +14,7 @@ function DashboardLayout({ children }) {
   const { toasts, removeToast } = useToast();
 
   if (loading || signingIn) {
-    return (
-      <AuthLoading
-        message={signingIn ? "Setting up your account..." : "Loading..."}
-      />
-    );
+    return <AuthLoading message="Loading, please wait." />;
   }
 
   if (!user) {
