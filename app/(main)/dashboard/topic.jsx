@@ -124,9 +124,9 @@ function Topic({ onHandleInputChange, currentTopic = "" }) {
                 <Button
                   variant={suggestion === selectTopic ? "secondary" : "outline"}
                   key={suggestion}
-                  className={`relative h-12 outline-none focus-visible:ring-2 focus-visible:ring-[--brand-from] transition-all duration-300 hover:!text-white ${
+                  className={`relative h-12 outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-from)] transition-all duration-300 hover:!text-white ${
                     suggestion === selectTopic
-                      ? "border-[--brand-from] border-2 !text-white"
+                      ? "border-[var(--brand-from)] border-2 !text-white"
                       : ""
                   }`}
                   onClick={() => handleSuggestionClick(suggestion)}
@@ -148,7 +148,7 @@ function Topic({ onHandleInputChange, currentTopic = "" }) {
                 }
                 className={`transition-all duration-300 ${
                   customTopic.trim()
-                    ? "border-[--brand-from] ring-[--brand-from]/20"
+                    ? "border-[var(--brand-from)] ring-[var(--brand-from)]"
                     : ""
                 }`}
               />
@@ -189,10 +189,10 @@ function Topic({ onHandleInputChange, currentTopic = "" }) {
                 onClick={() => handleScriptSelect(index)}
                 className={`
                   relative p-4 rounded-xl whitespace-pre-wrap text-sm shadow-md border 
-                  cursor-pointer transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] outline-none focus-visible:ring-2 focus-visible:ring-[--brand-from] hover:-translate-y-2 hover:shadow-[0_16px_48px_rgba(0,0,0,0.28)] hover:bg-[color-mix(in_oklab,var(--primary)_10%,transparent)] hover:border-[color-mix(in_oklab,var(--primary)_25%,transparent)]
+                  cursor-pointer transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-from)] hover:-translate-y-2 hover:shadow-[0_16px_48px_rgba(0,0,0,0.28)] hover:bg-[color-mix(in_oklab,var(--primary)_10%,transparent)] hover:border-[color-mix(in_oklab,var(--primary)_25%,transparent)]
                   ${
                     selectedScriptIndex === index
-                      ? "border-[--brand-from] border-2"
+                      ? "border-[var(--brand-from)] border-2"
                       : "border-border"
                   }
                 `}
@@ -202,7 +202,7 @@ function Topic({ onHandleInputChange, currentTopic = "" }) {
                   <FileText
                     className={`w-4 h-4 ${
                       selectedScriptIndex === index
-                        ? "text-[--brand-from]"
+                        ? "text-[var(--brand-from)]"
                         : "text-muted-foreground"
                     }`}
                   />

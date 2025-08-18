@@ -50,9 +50,9 @@ function Captions({ onHandleInputChange }) {
               setSelectedCaptionStyle(option.name);
               onHandleInputChange("caption", { style: option.name });
             }}
-            className={`relative h-24 border rounded-lg transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] outline-none focus-visible:ring-2 focus-visible:ring-[--brand-from] hover:-translate-y-2 hover:shadow-[0_16px_48px_rgba(0,0,0,0.28)] hover:bg-[color-mix(in_oklab,var(--primary)_10%,transparent)] hover:border-[color-mix(in_oklab,var(--primary)_25%,transparent)] ${
+            className={`relative h-24 border rounded-lg transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-from)] hover:-translate-y-2 hover:shadow-[0_16px_48px_rgba(0,0,0,0.28)] hover:bg-[color-mix(in_oklab,var(--primary)_10%,transparent)] hover:border-[color-mix(in_oklab,var(--primary)_25%,transparent)] ${
               selectedCaptionStyle === option.name
-                ? "border-[--brand-from] border-2"
+                ? "border-[var(--brand-from)] border-2"
                 : "border-border"
             }`}
           >

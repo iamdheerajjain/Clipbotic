@@ -69,9 +69,9 @@ function VideoStyle({ onHandleInputChange, videoData, onDownload }) {
         {options.map((option, index) => (
           <div
             key={index}
-            className={`cursor-pointer transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[--brand-from] hover:-translate-y-2 hover:shadow-[0_16px_48px_rgba(0,0,0,0.28)] hover:bg-[color-mix(in_oklab,var(--primary)_10%,transparent)] hover:border-[color-mix(in_oklab,var(--primary)_25%,transparent)] ${
+            className={`cursor-pointer transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-from)] hover:-translate-y-2 hover:shadow-[0_16px_48px_rgba(0,0,0,0.28)] hover:bg-[color-mix(in_oklab,var(--primary)_10%,transparent)] hover:border-[color-mix(in_oklab,var(--primary)_25%,transparent)] ${
               selectedStyle === option.name
-                ? "ring-[3px] ring-[--brand-from] ring-offset-2 ring-offset-background"
+                ? "ring-[3px] ring-[var(--brand-from)] ring-offset-2 ring-offset-background"
                 : ""
             }`}
             onClick={() => handleStyleSelect(option.name)}
@@ -84,8 +84,8 @@ function VideoStyle({ onHandleInputChange, videoData, onDownload }) {
             <div
               className={`relative w-full h-56 overflow-hidden rounded-lg border transition-all duration-300 ${
                 selectedStyle === option.name
-                  ? "border-[--brand-from] border-2"
-                  : "border-border hover:border-[--brand-from]/50"
+                  ? "border-[var(--brand-from)] border-2"
+                  : "border-border hover:border-[color-mix(in_oklab,var(--primary)_25%,transparent)]"
               }`}
             >
               <Image
