@@ -40,19 +40,22 @@ function VideoStyle({ onHandleInputChange, videoData, onDownload }) {
   };
 
   return (
-    <div className="mt-5">
-      <div className="flex items-center justify-between mb-2">
-        <div>
-          <h2 className="text-xl font-semibold">Video Styles</h2>
+    <div className="space-y-6">
+      {/* Header Section */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h2 className="text-xl font-semibold text-foreground">
+            Video Styles
+          </h2>
           <p className="text-sm text-muted-foreground">Select Video Style</p>
         </div>
 
-        {videoData ? (
+        {videoData && (
           <div className="flex flex-col gap-2">
             <button
               onClick={handleDownload}
               disabled={isDownloading || videoData.status !== "ready"}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg transition-colors duration-200"
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg transition-colors duration-200 font-medium"
             >
               {isDownloading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -62,10 +65,11 @@ function VideoStyle({ onHandleInputChange, videoData, onDownload }) {
               {isDownloading ? "Rendering..." : "Download MP4"}
             </button>
           </div>
-        ) : null}
+        )}
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      {/* Video Style Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
         {options.map((option, index) => (
           <div
             key={index}
@@ -98,7 +102,7 @@ function VideoStyle({ onHandleInputChange, videoData, onDownload }) {
               />
             </div>
 
-            <div className="mt-2 text-center">
+            <div className="mt-3 text-center">
               <p
                 className={`text-sm font-medium transition-all duration-300 ${
                   selectedStyle === option.name

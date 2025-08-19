@@ -463,59 +463,73 @@ function CreateNewVideo() {
   };
 
   return (
-    <div className="space-y-5">
-      <SectionHeader
-        title="Create New Video"
-        subtitle="Describe your idea, pick a style and voice, and generate a polished short."
-      />
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="space-y-8">
+        <SectionHeader
+          title="Create New Video"
+          subtitle="Describe your idea, pick a style and voice, and generate a polished short."
+        />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <GlassPanel className="col-span-2 p-5 md:p-6">
-          <div className="space-y-6">
-            <Topic
-              onHandleInputChange={onHandleInputChange}
-              currentTopic={formData?.topic}
-            />
-            <VideoStyle
-              onHandleInputChange={onHandleInputChange}
-              videoData={generatedVideoData}
-              onDownload={handleDownload}
-            />
-            <Voice onHandleInputChange={onHandleInputChange} />
-            <Captions onHandleInputChange={onHandleInputChange} />
-            <Button
-              className="w-full mt-1"
-              onClick={GenerateVideo}
-              disabled={!isFormComplete() || createVideoLoading}
-            >
-              <WandSparkles className="mr-2" />
-              {createVideoLoading ? "Generating..." : "Generate Video"}{" "}
-              {!isFormComplete() && "(Form Incomplete)"}
-            </Button>
-            <p className="text-xs text-muted-foreground text-center">
-              💡 Tip: Press Ctrl+Enter to generate video
-            </p>
-          </div>
-        </GlassPanel>
-        <GlassPanel className="p-5 md:p-6">
-          <div className="space-y-6">
-            <FormProgress formData={formData} />
-            <Preview
-              videoUrl={formData?.previewUrl}
-              placeholderImageUrl={
-                Array.isArray(formData?.images)
-                  ? formData.images?.[0]
-                  : undefined
-              }
-              selectedVideoStyle={formData?.videoStyle}
-              selectedCaption={formData?.caption?.style}
-            />
-            <p className="text-xs text-muted-foreground text-center">
-              Your rendered preview will appear here once ready.
-            </p>
-          </div>
-        </GlassPanel>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Form Section */}
+          <GlassPanel className="lg:col-span-2 p-6 lg:p-8">
+            <div className="space-y-8">
+              <Topic
+                onHandleInputChange={onHandleInputChange}
+                currentTopic={formData?.topic}
+              />
+              <VideoStyle
+                onHandleInputChange={onHandleInputChange}
+                videoData={generatedVideoData}
+                onDownload={handleDownload}
+              />
+              <Voice onHandleInputChange={onHandleInputChange} />
+              <Captions onHandleInputChange={onHandleInputChange} />
+
+              {/* Generate Button Section */}
+              <div className="pt-4 border-t border-border/50">
+                <Button
+                  className="w-full h-12 text-lg font-semibold"
+                  onClick={GenerateVideo}
+                  disabled={!isFormComplete() || createVideoLoading}
+                >
+                  <WandSparkles className="mr-3 w-5 h-5" />
+                  {createVideoLoading ? "Generating..." : "Generate Video"}
+                  {!isFormComplete() && (
+                    <span className="ml-2 text-sm opacity-75">
+                      (Form Incomplete)
+                    </span>
+                  )}
+                </Button>
+                <p className="text-sm text-muted-foreground text-center mt-3">
+                  💡 Tip: Press Ctrl+Enter to generate video
+                </p>
+              </div>
+            </div>
+          </GlassPanel>
+
+          {/* Sidebar Preview Section */}
+          <GlassPanel className="p-6 lg:p-8 h-fit">
+            <div className="space-y-6">
+              <FormProgress formData={formData} />
+              <Preview
+                videoUrl={formData?.previewUrl}
+                placeholderImageUrl={
+                  Array.isArray(formData?.images)
+                    ? formData.images?.[0]
+                    : undefined
+                }
+                selectedVideoStyle={formData?.videoStyle}
+                selectedCaption={formData?.caption?.style}
+              />
+              <p className="text-sm text-muted-foreground text-center">
+                Your rendered preview will appear here once ready.
+              </p>
+            </div>
+          </GlassPanel>
+        </div>
       </div>
+
       <LoadingOverlay
         isVisible={createVideoLoading}
         message="Generating your video..."

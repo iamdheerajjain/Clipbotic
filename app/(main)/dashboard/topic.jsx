@@ -100,31 +100,41 @@ function Topic({ onHandleInputChange, currentTopic = "" }) {
   };
 
   return (
-    <div>
-      <h2 className="mb-1">Project Title</h2>
-      <Input
-        placeholder="Enter project Title"
-        onChange={(event) => onHandleInputChange("title", event?.target.value)}
-      />
+    <div className="space-y-6">
+      {/* Project Title Section */}
+      <div className="space-y-3">
+        <h2 className="text-xl font-semibold text-foreground">Project Title</h2>
+        <Input
+          placeholder="Enter project title"
+          onChange={(event) =>
+            onHandleInputChange("title", event?.target.value)
+          }
+          className="h-12 text-base"
+        />
+      </div>
 
-      <div className="mt-5">
-        <h2>Video Topic</h2>
-        <p className="text-sm text-muted-foreground">
-          Select topic for your video
-        </p>
-        <Tabs defaultValue="suggestion" className="w-full mt-2">
-          <TabsList>
+      {/* Video Topic Section */}
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-xl font-semibold text-foreground">Video Topic</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Select topic for your video
+          </p>
+        </div>
+
+        <Tabs defaultValue="suggestion" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="suggestion">Suggestions</TabsTrigger>
             <TabsTrigger value="your_topic">Your Topic</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="suggestion">
+          <TabsContent value="suggestion" className="mt-4">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {suggestions.map((suggestion) => (
                 <Button
                   variant={suggestion === selectTopic ? "secondary" : "outline"}
                   key={suggestion}
-                  className={`relative h-12 outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-from)] transition-all duration-300 hover:!text-white ${
+                  className={`relative h-14 outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-from)] transition-all duration-300 hover:!text-white ${
                     suggestion === selectTopic
                       ? "border-[var(--brand-from)] border-2 !text-white"
                       : ""
@@ -137,16 +147,18 @@ function Topic({ onHandleInputChange, currentTopic = "" }) {
             </div>
           </TabsContent>
 
-          <TabsContent value="your_topic">
-            <div>
-              <h2>Enter your own topic</h2>
+          <TabsContent value="your_topic" className="mt-4">
+            <div className="space-y-3">
+              <h3 className="text-lg font-medium text-foreground">
+                Enter your own topic
+              </h3>
               <Textarea
                 placeholder="Enter your topic"
                 value={customTopic}
                 onChange={(event) =>
                   handleCustomTopicChange(event.target.value)
                 }
-                className={`transition-all duration-300 ${
+                className={`min-h-[100px] text-base transition-all duration-300 ${
                   customTopic.trim()
                     ? "border-[var(--brand-from)] ring-[var(--brand-from)]"
                     : ""
@@ -155,7 +167,7 @@ function Topic({ onHandleInputChange, currentTopic = "" }) {
 
               {/* Custom Topic Indicator */}
               {customTopic.trim() && (
-                <div className="mt-2 flex items-center gap-2 text-sm text-[--brand-from]">
+                <div className="flex items-center gap-2 text-sm text-[var(--brand-from)]">
                   <span>Custom topic selected</span>
                 </div>
               )}
@@ -164,22 +176,26 @@ function Topic({ onHandleInputChange, currentTopic = "" }) {
         </Tabs>
       </div>
 
-      <Button
-        className="mt-3 w-full"
-        disabled={loading || (!selectTopic && !customTopic.trim())}
-        onClick={GenerateScript}
-      >
-        {loading ? (
-          <Loader2Icon className="animate-spin mr-2 h-4 w-4" />
-        ) : (
-          <Sparkles className="mr-2 h-4 w-4" />
-        )}
-        Generate Script
-      </Button>
+      {/* Generate Script Button */}
+      <div className="pt-2">
+        <Button
+          className="w-full h-12 text-base font-medium"
+          disabled={loading || (!selectTopic && !customTopic.trim())}
+          onClick={GenerateScript}
+        >
+          {loading ? (
+            <Loader2Icon className="animate-spin mr-2 h-5 w-5" />
+          ) : (
+            <Sparkles className="mr-2 h-5 w-5" />
+          )}
+          Generate Script
+        </Button>
+      </div>
 
+      {/* Script Selection */}
       {scripts.length > 0 && (
-        <div className="mt-5">
-          <h2 className="text-center text-xl font-semibold mb-4">
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold text-center text-foreground">
             Select the Script
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -188,7 +204,7 @@ function Topic({ onHandleInputChange, currentTopic = "" }) {
                 key={index}
                 onClick={() => handleScriptSelect(index)}
                 className={`
-                  relative p-4 rounded-xl whitespace-pre-wrap text-sm shadow-md border 
+                  relative p-5 rounded-xl whitespace-pre-wrap text-sm shadow-md border 
                   cursor-pointer transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-from)] hover:-translate-y-2 hover:shadow-[0_16px_48px_rgba(0,0,0,0.28)] hover:bg-[color-mix(in_oklab,var(--primary)_10%,transparent)] hover:border-[color-mix(in_oklab,var(--primary)_25%,transparent)]
                   ${
                     selectedScriptIndex === index
@@ -198,20 +214,22 @@ function Topic({ onHandleInputChange, currentTopic = "" }) {
                 `}
               >
                 {/* Script Icon */}
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center gap-2 mb-3">
                   <FileText
-                    className={`w-4 h-4 ${
+                    className={`w-5 h-5 ${
                       selectedScriptIndex === index
                         ? "text-[var(--brand-from)]"
                         : "text-muted-foreground"
                     }`}
                   />
-                  <span className="text-xs font-medium text-muted-foreground">
+                  <span className="text-sm font-medium text-muted-foreground">
                     Script {index + 1}
                   </span>
                 </div>
 
-                {item.content}
+                <div className="text-foreground leading-relaxed">
+                  {item.content}
+                </div>
               </div>
             ))}
           </div>

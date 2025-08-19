@@ -37,11 +37,15 @@ function Captions({ onHandleInputChange }) {
   const [selectedCaptionStyle, setSelectedCaptionStyle] = useState("");
 
   return (
-    <div className="mt-5">
-      <h2>Captions</h2>
-      <p className="text-sm text-muted-foreground">Select Caption Style</p>
+    <div className="space-y-6">
+      {/* Header Section */}
+      <div className="space-y-1">
+        <h2 className="text-xl font-semibold text-foreground">Captions</h2>
+        <p className="text-sm text-muted-foreground">Select Caption Style</p>
+      </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
+      {/* Caption Options Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {options.map((option, index) => (
           <button
             key={index}
@@ -50,13 +54,15 @@ function Captions({ onHandleInputChange }) {
               setSelectedCaptionStyle(option.name);
               onHandleInputChange("caption", { style: option.name });
             }}
-            className={`relative h-24 border rounded-lg transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-from)] hover:-translate-y-2 hover:shadow-[0_16px_48px_rgba(0,0,0,0.28)] hover:bg-[color-mix(in_oklab,var(--primary)_10%,transparent)] hover:border-[color-mix(in_oklab,var(--primary)_25%,transparent)] ${
+            className={`relative h-28 border rounded-lg transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-from)] hover:-translate-y-2 hover:shadow-[0_16px_48px_rgba(0,0,0,0.28)] hover:bg-[color-mix(in_oklab,var(--primary)_10%,transparent)] hover:border-[color-mix(in_oklab,var(--primary)_25%,transparent)] ${
               selectedCaptionStyle === option.name
                 ? "border-[var(--brand-from)] border-2"
                 : "border-border"
             }`}
           >
-            <span className={option.style}>{option.name}</span>
+            <div className="flex items-center justify-center h-full p-3">
+              <span className={option.style}>{option.name}</span>
+            </div>
           </button>
         ))}
       </div>
