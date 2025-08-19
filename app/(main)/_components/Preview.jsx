@@ -1,6 +1,7 @@
 "use client";
-import React from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
+import { Gauge } from "lucide-react";
 
 // Caption styles mapping
 const captionStyles = {
@@ -23,9 +24,18 @@ export default function Preview({
   selectedVideoStyle,
   selectedCaption,
 }) {
+  const videoRef = useRef(null);
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [showMenu, setShowMenu] = useState(false);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = playbackRate;
+    }
+  }, [playbackRate, videoUrl]);
+
   const handleDownload = () => {
     if (!videoUrl) {
-      console.error("No video source found to download.");
       return;
     }
 
@@ -52,26 +62,65 @@ export default function Preview({
     <div className="flex flex-col items-center gap-4 mt-6 w-full">
       {videoUrl ? (
         <>
-          <video
-            src={videoUrl}
-            controls
-            className="rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.2)] w-full h-auto border border-border"
-          />
-          <div className="flex gap-3">
-            <button
-              onClick={handleDownload}
-              className="px-4 py-2 rounded-lg bg-[linear-gradient(135deg,var(--brand-from),var(--brand-to))] text-primary-foreground hover:opacity-95 transition"
-            >
-              Download
-            </button>
-            <a
-              href={videoUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="px-4 py-2 rounded-lg border border-border hover:bg-secondary transition"
-            >
-              Open in new tab
-            </a>
+          <div className="relative w-full">
+            <video
+              ref={videoRef}
+              src={videoUrl}
+              controls
+              className="rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.2)] w-full h-auto border border-border"
+            />
+            {/* Overlay speed selector bottom-right near controls */}
+            <div className="absolute bottom-[10px] right-[48px] z-10">
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setShowMenu((v) => !v)}
+                  className="size-8 flex items-center justify-center rounded-md backdrop-blur-sm bg-black/60 border border-gray-700 text-white hover:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/30"
+                  aria-label="Playback speed"
+                >
+                  <Gauge className="w-4 h-4" />
+                </button>
+                {showMenu && (
+                  <div className="absolute bottom-10 right-0 min-w-[84px] rounded-md backdrop-blur-sm bg-black/70 border border-gray-700 shadow-md p-1">
+                    {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map((rate) => (
+                      <button
+                        key={rate}
+                        type="button"
+                        onClick={() => {
+                          setPlaybackRate(rate);
+                          setShowMenu(false);
+                        }}
+                        className={`w-full text-left px-2 py-1 rounded-sm text-xs ${
+                          playbackRate === rate
+                            ? "bg-gray-700/50 text-white"
+                            : "text-gray-200 hover:bg-gray-700/40"
+                        }`}
+                      >
+                        {rate}x
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="w-full flex items-center justify-end">
+            <div className="flex gap-3">
+              <button
+                onClick={handleDownload}
+                className="px-4 py-2 rounded-lg bg-[linear-gradient(135deg,var(--brand-from),var(--brand-to))] text-primary-foreground hover:opacity-95 transition"
+              >
+                Download
+              </button>
+              <a
+                href={videoUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="px-4 py-2 rounded-lg border border-border hover:bg-secondary transition"
+              >
+                Open in new tab
+              </a>
+            </div>
           </div>
         </>
       ) : (

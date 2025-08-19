@@ -40,23 +40,16 @@ function VideoInfo({ videoData }) {
 
   const handleDownloadVideo = useCallback(async () => {
     if (!videoData) {
-      console.error("No video data available for download.");
       return;
     }
 
     if (!videoReadiness.isReady) {
-      const missing = videoReadiness.missingComponents.join(", ");
-      console.error(
-        `Video is not ready yet. Missing: ${missing}. Please wait a few minutes and try again.`
-      );
       return;
     }
 
     setIsDownloading(true);
 
     try {
-      console.log("Starting video download for:", videoData.title);
-
       // Prepare video data with correct field names for the API
       const videoDataForAPI = {
         ...videoData,
@@ -84,8 +77,6 @@ function VideoInfo({ videoData }) {
         throw new Error(errorData.error || "Failed to render video");
       }
 
-      console.log("Video rendered successfully, preparing download...");
-
       // Get the video blob
       const blob = await response.blob();
 
@@ -100,10 +91,7 @@ function VideoInfo({ videoData }) {
 
       // Clean up
       window.URL.revokeObjectURL(url);
-
-      console.log("Video download completed successfully");
     } catch (error) {
-      console.error("Download failed:", error);
     } finally {
       setIsDownloading(false);
     }
@@ -147,14 +135,16 @@ function VideoInfo({ videoData }) {
 
   return (
     <div className="space-y-6">
-      {/* Back Button */}
-      <button
-        onClick={handleBack}
-        className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-200"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        <span className="text-sm">Back to Videos</span>
-      </button>
+      {/* Back Button (no glow/purple effects) */}
+      <div className="no-hover-glow inline-block">
+        <button
+          onClick={handleBack}
+          className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-200 focus:outline-none bounce-on-hover"
+        >
+          <ArrowLeft className="w-4 h-4 bounce-target" />
+          <span className="text-sm bounce-target">Back to Videos</span>
+        </button>
+      </div>
 
       {/* Video Information */}
       <div className="space-y-4">

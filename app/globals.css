@@ -660,3 +660,67 @@ a[data-variant="destructive"]:focus,
     justify-content: space-between;
   }
 }
+
+/* Disable hover glow effects within specific scopes */
+.no-hover-glow button,
+.no-hover-glow [onClick],
+.no-hover-glow [role="button"],
+.no-hover-glow .clickable,
+.no-hover-glow a,
+.no-hover-glow [href] {
+  transition: none !important;
+}
+
+.no-hover-glow button:hover,
+.no-hover-glow [onClick]:hover,
+.no-hover-glow [role="button"]:hover,
+.no-hover-glow .clickable:hover,
+.no-hover-glow a:hover,
+.no-hover-glow [href]:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.no-hover-glow button:hover::before,
+.no-hover-glow [onClick]:hover::before,
+.no-hover-glow [role="button"]:hover::before,
+.no-hover-glow .clickable:hover::before,
+.no-hover-glow a:hover::before,
+.no-hover-glow [href]:hover::before {
+  display: none !important;
+}
+
+.no-hover-glow button:focus,
+.no-hover-glow [onClick]:focus,
+.no-hover-glow [role="button"]:focus,
+.no-hover-glow .clickable:focus,
+.no-hover-glow a:focus,
+.no-hover-glow [href]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Subtle lift/scale for Remotion player control icons while hovered */
+.no-hover-glow [data-remotion-player="true"] button svg,
+.no-hover-glow [data-remotion-player="true"] [role="button"] svg,
+.no-hover-glow button svg,
+.no-hover-glow [role="button"] svg {
+  transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.no-hover-glow [data-remotion-player="true"] button:hover svg,
+.no-hover-glow [data-remotion-player="true"] [role="button"]:hover svg,
+/* Also affect any SVG icon inside buttons within the scoped container */
+.no-hover-glow button:hover svg,
+.no-hover-glow [role="button"]:hover svg {
+  transform: translateY(-2px) scale(1.08);
+}
+
+/* Back to Videos bounce: lift both icon and text on hover */
+.no-hover-glow .bounce-on-hover .bounce-target {
+  transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.no-hover-glow .bounce-on-hover:hover .bounce-target {
+  transform: translateY(-2px) scale(1.08);
+}

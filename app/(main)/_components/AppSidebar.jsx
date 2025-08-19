@@ -68,12 +68,12 @@ function AppSidebar({ isOpen = true, onToggle }) {
     <Sidebar
       className={`transition-all duration-150 ${isOpen ? "w-64" : "w-16"}`}
     >
-      <SidebarHeader>
+      <SidebarHeader className="no-hover-glow">
         <div className="flex items-center justify-between w-full">
           {isOpen ? (
             <>
               <Link href="/" className="flex-1">
-                <div className="flex flex-col w-full gap-2 cursor-pointer transition-opacity duration-200 p-2 rounded-lg">
+                <div className="flex flex-col w-full gap-2 cursor-pointer transition-opacity duration-200 hover:opacity-90 p-2 rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="relative">
                       <Image
@@ -104,16 +104,16 @@ function AppSidebar({ isOpen = true, onToggle }) {
                 variant="ghost"
                 size="sm"
                 onClick={onToggle}
-                className="h-8 w-8 p-0 hover:bg-muted/50"
+                className="group h-8 w-8 p-0 hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 active:bg-gradient-to-r active:from-purple-700 active:to-blue-700 hover:!text-white active:!text-white"
               >
-                <XIcon className="h-4 w-4" />
+                <XIcon className="h-4 w-4 transition-colors group-hover:!text-white group-active:!text-white" />
               </Button>
             </>
           ) : (
             <>
               {/* Logo only for collapsed state */}
               <Link href="/" className="flex-1 flex justify-center">
-                <div className="relative cursor-pointer transition-opacity duration-200 p-2 rounded-lg">
+                <div className="relative cursor-pointer transition-opacity duration-200 hover:opacity-90 p-2 rounded-lg">
                   <Image
                     src="/logo.svg"
                     alt="Logo"

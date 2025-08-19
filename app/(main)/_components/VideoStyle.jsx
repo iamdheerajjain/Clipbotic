@@ -44,10 +44,10 @@ function VideoStyle({ onHandleInputChange, videoData, onDownload }) {
       {/* Header Section */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h2 className="text-xl font-semibold text-foreground">
-            Video Styles
-          </h2>
-          <p className="text-sm text-muted-foreground">Select Video Style</p>
+          <h3 className="text-lg font-semibold text-white">Video Styles</h3>
+          <p className="text-gray-400 text-sm">
+            Choose the visual style that matches your content
+          </p>
         </div>
 
         {videoData && (
@@ -55,7 +55,7 @@ function VideoStyle({ onHandleInputChange, videoData, onDownload }) {
             <button
               onClick={handleDownload}
               disabled={isDownloading || videoData.status !== "ready"}
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg transition-colors duration-200 font-medium"
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 text-white rounded-lg transition-all duration-300 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               {isDownloading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -69,13 +69,13 @@ function VideoStyle({ onHandleInputChange, videoData, onDownload }) {
       </div>
 
       {/* Video Style Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {options.map((option, index) => (
           <div
             key={index}
-            className={`cursor-pointer transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-from)] hover:-translate-y-2 hover:shadow-[0_16px_48px_rgba(0,0,0,0.28)] hover:bg-[color-mix(in_oklab,var(--primary)_10%,transparent)] hover:border-[color-mix(in_oklab,var(--primary)_25%,transparent)] ${
+            className={`cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-blue-500 hover:-translate-y-2 hover:shadow-xl hover:bg-gray-800 ${
               selectedStyle === option.name
-                ? "ring-[3px] ring-[var(--brand-from)] ring-offset-2 ring-offset-background"
+                ? "ring-4 ring-blue-500 ring-offset-4 ring-offset-black shadow-2xl scale-105"
                 : ""
             }`}
             onClick={() => handleStyleSelect(option.name)}
@@ -86,10 +86,10 @@ function VideoStyle({ onHandleInputChange, videoData, onDownload }) {
             }}
           >
             <div
-              className={`relative w-full h-56 overflow-hidden rounded-lg border transition-all duration-300 ${
+              className={`relative w-full h-48 overflow-hidden rounded-xl border-2 transition-all duration-300 ${
                 selectedStyle === option.name
-                  ? "border-[var(--brand-from)] border-2"
-                  : "border-border hover:border-[color-mix(in_oklab,var(--primary)_25%,transparent)]"
+                  ? "border-blue-500 shadow-xl"
+                  : "border-gray-700 hover:border-blue-500"
               }`}
             >
               <Image
@@ -97,17 +97,30 @@ function VideoStyle({ onHandleInputChange, videoData, onDownload }) {
                 alt={option.name}
                 fill
                 sizes="(max-width: 768px) 50vw, 33vw"
-                className="object-cover transition-transform duration-300 hover:scale-105"
+                className="object-cover transition-transform duration-500 hover:scale-110"
                 priority={option.name === "Realistic"}
               />
+
+              {/* Selection Overlay */}
+              {selectedStyle === option.name && (
+                <div className="absolute inset-0 bg-gradient-to-t from-blue-600/80 via-transparent to-transparent flex items-end">
+                  <div className="p-3 w-full">
+                    <div className="bg-gray-900/90 rounded-lg p-2 text-center">
+                      <span className="text-blue-300 font-semibold text-sm">
+                        ✓ Selected
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="mt-3 text-center">
               <p
-                className={`text-sm font-medium transition-all duration-300 ${
+                className={`text-sm font-semibold transition-all duration-300 ${
                   selectedStyle === option.name
-                    ? "!text-white"
-                    : "text-foreground"
+                    ? "text-blue-400"
+                    : "text-gray-200"
                 }`}
               >
                 {option.name}

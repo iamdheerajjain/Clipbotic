@@ -356,127 +356,135 @@ function VideosPage() {
   }
 
   return (
-    <div>
+    <div className="p-6">
       <SectionHeader
         title="My Videos"
         subtitle="Manage and view all your generated videos"
         actions={
-          <Button asChild>
+          <Button
+            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-black font-semibold px-4 py-3 rounded-xl shadow-[0_8px_30px_rgba(124,58,237,0.3)] hover:shadow-[0_12px_40px_rgba(124,58,237,0.4)] transition-all duration-300"
+            asChild
+          >
             <Link href="/dashboard/create">Create New Video</Link>
           </Button>
         }
       />
 
-      {/* Search and Filters */}
-      <div className="mt-8 mb-6 space-y-4">
-        <div className="flex flex-col lg:flex-row gap-4">
-          <div className="relative flex-1 min-w-0">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input
-              placeholder="Search videos by title, topic, or script..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <div className="flex gap-2 flex-shrink-0">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border border-border rounded-lg bg-background text-foreground"
-            >
-              <option value="all">All Status</option>
-              <option value="ready">Ready</option>
-              <option value="processing">Processing</option>
-            </select>
-            <select
-              value={styleFilter}
-              onChange={(e) => setStyleFilter(e.target.value)}
-              className="px-3 py-2 border border-border rounded-lg bg-background text-foreground"
-            >
-              <option value="all">All Styles</option>
-              <option value="Realistic">Realistic</option>
-              <option value="Cinematic">Cinematic</option>
-              <option value="Anime">Anime</option>
-              <option value="Watercolor">Watercolor</option>
-              <option value="Cyberpunk">Cyberpunk</option>
-              <option value="GTA">GTA</option>
-            </select>
-          </div>
-        </div>
-        {searchTerm || statusFilter !== "all" || styleFilter !== "all" ? (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Filter className="w-4 h-4" />
-            <span>
-              Showing {filteredVideos.length} of {userVideos.length} videos
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setSearchTerm("");
-                setStatusFilter("all");
-                setStyleFilter("all");
-              }}
-            >
-              Clear Filters
-            </Button>
-          </div>
-        ) : null}
-      </div>
-
-      <div className="mt-8">
-        {filteredVideos.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="mx-auto w-24 h-24 bg-secondary rounded-full flex items-center justify-center mb-4 border border-border">
-              <Play className="w-12 h-12 text-[--brand-from]" />
+      <div className="no-hover-glow">
+        {/* Search and Filters */}
+        <div className="mt-8 mb-6 space-y-4">
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="relative flex-1 min-w-0">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Search videos by title, topic, or script..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
             </div>
-            <h3 className="text-lg font-semibold mb-2">No videos yet</h3>
-            <p className="text-muted-foreground mb-4">
-              Create your first video to get started
-            </p>
-            <Button asChild>
-              <Link href="/dashboard/create">Create New Video</Link>
-            </Button>
+            <div className="flex gap-2 flex-shrink-0">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-3 py-2 border border-border rounded-lg bg-background text-foreground"
+              >
+                <option value="all">All Status</option>
+                <option value="ready">Ready</option>
+                <option value="processing">Processing</option>
+              </select>
+              <select
+                value={styleFilter}
+                onChange={(e) => setStyleFilter(e.target.value)}
+                className="px-3 py-2 border border-border rounded-lg bg-background text-foreground"
+              >
+                <option value="all">All Styles</option>
+                <option value="Realistic">Realistic</option>
+                <option value="Cinematic">Cinematic</option>
+                <option value="Anime">Anime</option>
+                <option value="Watercolor">Watercolor</option>
+                <option value="Cyberpunk">Cyberpunk</option>
+                <option value="GTA">GTA</option>
+              </select>
+            </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredVideos.map((video, index) => (
-              <div key={video.id || `video-${video.title}`} className="h-full">
-                <VideoCard
-                  video={video}
-                  onDeleteClick={handleDeleteClick}
-                  isPlayable={video.isPlayable}
-                />
+          {searchTerm || statusFilter !== "all" || styleFilter !== "all" ? (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Filter className="w-4 h-4" />
+              <span>
+                Showing {filteredVideos.length} of {userVideos.length} videos
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSearchTerm("");
+                  setStatusFilter("all");
+                  setStyleFilter("all");
+                }}
+              >
+                Clear Filters
+              </Button>
+            </div>
+          ) : null}
+        </div>
+
+        <div className="mt-8">
+          {filteredVideos.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="mx-auto w-24 h-24 bg-secondary rounded-full flex items-center justify-center mb-4 border border-border">
+                <Play className="w-12 h-12 text-[--brand-from]" />
               </div>
-            ))}
+              <h3 className="text-lg font-semibold mb-2">No videos yet</h3>
+              <p className="text-muted-foreground mb-4">
+                Create your first video to get started
+              </p>
+              <Button asChild>
+                <Link href="/dashboard/create">Create New Video</Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredVideos.map((video, index) => (
+                <div
+                  key={video.id || `video-${video.title}`}
+                  className="h-full"
+                >
+                  <VideoCard
+                    video={video}
+                    onDeleteClick={handleDeleteClick}
+                    isPlayable={video.isPlayable}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {deleteConfirm && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-card border border-border rounded-xl shadow-xl p-6 w-full max-w-md mx-4">
+              <div className="flex items-center gap-3 mb-3">
+                <AlertTriangle className="w-6 h-6 text-rose-400" />
+                <h3 className="text-lg font-semibold">Confirm Deletion</h3>
+              </div>
+              <p className="text-sm text-muted-foreground mb-5">
+                Are you sure you want to delete "
+                {deleteConfirm.title || "Untitled Video"}"? This action cannot
+                be undone.
+              </p>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={handleDeleteCancel}>
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={handleDeleteConfirm}>
+                  Delete
+                </Button>
+              </div>
+            </div>
           </div>
         )}
       </div>
-
-      {deleteConfirm && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-card border border-border rounded-xl shadow-xl p-6 w-full max-w-md mx-4">
-            <div className="flex items-center gap-3 mb-3">
-              <AlertTriangle className="w-6 h-6 text-rose-400" />
-              <h3 className="text-lg font-semibold">Confirm Deletion</h3>
-            </div>
-            <p className="text-sm text-muted-foreground mb-5">
-              Are you sure you want to delete "
-              {deleteConfirm.title || "Untitled Video"}"? This action cannot be
-              undone.
-            </p>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={handleDeleteCancel}>
-                Cancel
-              </Button>
-              <Button variant="destructive" onClick={handleDeleteConfirm}>
-                Delete
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

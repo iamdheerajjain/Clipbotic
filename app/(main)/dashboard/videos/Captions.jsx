@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 const options = [
   {
@@ -37,31 +37,38 @@ function Captions({ onHandleInputChange }) {
   const [selectedCaptionStyle, setSelectedCaptionStyle] = useState("");
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header Section */}
       <div className="space-y-1">
-        <h2 className="text-xl font-semibold text-foreground">Captions</h2>
-        <p className="text-sm text-muted-foreground">Select Caption Style</p>
+        <h3 className="text-lg font-semibold text-white">Caption Styles</h3>
+        <p className="text-gray-400 text-sm">
+          Choose how your text appears on screen
+        </p>
       </div>
 
       {/* Caption Options Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {options.map((option, index) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {options.map((option) => (
           <button
-            key={index}
-            type="button"
-            onClick={() => {
-              setSelectedCaptionStyle(option.name);
-              onHandleInputChange("caption", { style: option.name });
-            }}
-            className={`relative h-28 border rounded-lg transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-from)] hover:-translate-y-2 hover:shadow-[0_16px_48px_rgba(0,0,0,0.28)] hover:bg-[color-mix(in_oklab,var(--primary)_10%,transparent)] hover:border-[color-mix(in_oklab,var(--primary)_25%,transparent)] ${
+            key={option.name}
+            onClick={() =>
+              onHandleInputChange("caption", { style: option.name })
+            }
+            className={`h-24 rounded-xl border transition-all duration-300 overflow-hidden ${
               selectedCaptionStyle === option.name
-                ? "border-[var(--brand-from)] border-2"
-                : "border-border"
+                ? "border-purple-500 bg-purple-500/10"
+                : "border-gray-800 bg-black hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/20"
             }`}
           >
-            <div className="flex items-center justify-center h-full p-3">
+            <div className="flex items-center justify-center h-full p-3 relative">
               <span className={option.style}>{option.name}</span>
+
+              {/* Selection Overlay */}
+              {selectedCaptionStyle === option.name && (
+                <div className="absolute top-2 right-2 w-5 h-5 bg-purple-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xs">✓</span>
+                </div>
+              )}
             </div>
           </button>
         ))}

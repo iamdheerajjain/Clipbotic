@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import AppSidebar from "./_components/AppSidebar";
 import { useAuthContext } from "@/app/providers";
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import AuthLoading from "@/components/ui/auth-loading";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -44,9 +43,7 @@ function DashboardLayout({ children }) {
           sidebarOpen ? "ml-0" : "ml-0"
         }`}
       >
-        <div className="mx-auto p-6">
-          <div className="mx-auto max-w-7xl">{children}</div>
-        </div>
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-6">{children}</div>
       </main>
       <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>

@@ -1,16 +1,18 @@
 "use client";
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Player } from "@remotion/player";
 import RemotionComposition from "@/app/(main)/_components/RemotionComposition";
 import { useVideoPerformance } from "@/hooks/use-video-performance";
+import { Gauge } from "lucide-react";
 
 const FPS = 30;
 
 function RemotionPlayer({ videoData }) {
   const [durationInFrames, setDurationInFrames] = useState(null);
-  const [retryCount, setRetryCount] = useState(0);
   const [error, setError] = useState(null);
   const [isReady, setIsReady] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [showSpeedMenu, setShowSpeedMenu] = useState(false);
 
   // Use the performance optimization hook
   const { isOptimized, preloadProgress, audioRef } =
@@ -27,48 +29,7 @@ function RemotionPlayer({ videoData }) {
     ]
   );
 
-  // Debug logging for audio issues
-  useEffect(() => {
-    if (memoizedVideoData) {
-      console.log("Video data for player:", {
-        hasAudioURL: !!memoizedVideoData.audioURL,
-        audioURL: memoizedVideoData.audioURL,
-        audioURLType: typeof memoizedVideoData.audioURL,
-        hasImages: !!memoizedVideoData.images,
-        imageCount: Array.isArray(memoizedVideoData.images)
-          ? memoizedVideoData.images.length
-          : "unknown",
-        hasCaptions: !!memoizedVideoData.captionJson,
-      });
-    }
-  }, [memoizedVideoData]);
-
-  // Validate audio URL format
-  const isValidAudioURL = useMemo(() => {
-    if (!memoizedVideoData?.audioURL) return false;
-
-    const url = memoizedVideoData.audioURL;
-
-    // Check if it's a valid URL
-    try {
-      new URL(url);
-    } catch {
-      console.warn("Invalid audio URL format:", url);
-      return false;
-    }
-
-    // Check if it's an audio file
-    const audioExtensions = [".mp3", ".wav", ".ogg", ".m4a", ".aac", ".webm"];
-    const hasAudioExtension = audioExtensions.some((ext) =>
-      url.toLowerCase().includes(ext)
-    );
-
-    if (!hasAudioExtension) {
-      console.warn("Audio URL doesn't have a recognized audio extension:", url);
-    }
-
-    return hasAudioExtension;
-  }, [memoizedVideoData?.audioURL]);
+  //
 
   // Set duration from optimized audio
   useEffect(() => {
@@ -76,7 +37,6 @@ function RemotionPlayer({ videoData }) {
       const frames = Math.ceil(audioRef.duration * FPS);
       if (frames > 0) {
         setDurationInFrames(frames);
-        setError(null);
         setIsReady(true);
       }
     }
@@ -99,9 +59,6 @@ function RemotionPlayer({ videoData }) {
         const wordCount = memoizedVideoData.script.split(/\s+/).length;
         const estimatedDurationSeconds = Math.max(10, wordCount / 2.5); // 2.5 words per second
         calculatedDuration = Math.ceil(estimatedDurationSeconds * FPS);
-        console.log(
-          `Script-based duration: ${wordCount} words = ${estimatedDurationSeconds}s = ${calculatedDuration} frames`
-        );
       }
 
       // Method 2: Use caption timing if available
@@ -117,12 +74,9 @@ function RemotionPlayer({ videoData }) {
             const captionDuration = Math.ceil((lastCaption.end || 0) * FPS);
             if (captionDuration > calculatedDuration) {
               calculatedDuration = captionDuration;
-              console.log(`Caption-based duration: ${captionDuration} frames`);
             }
           }
-        } catch (error) {
-          console.warn("Failed to parse captions for duration:", error);
-        }
+        } catch (error) {}
       }
 
       // Method 3: Use image count as fallback
@@ -130,38 +84,21 @@ function RemotionPlayer({ videoData }) {
         const imageBasedDuration = memoizedVideoData.images.length * 3 * FPS; // 3 seconds per image
         if (imageBasedDuration > calculatedDuration) {
           calculatedDuration = imageBasedDuration;
-          console.log(`Image-based duration: ${imageBasedDuration} frames`);
         }
       }
 
       setDurationInFrames(calculatedDuration);
-      setError(null);
       setIsReady(true);
-      console.log(
-        `Final duration: ${calculatedDuration} frames (${
-          calculatedDuration / FPS
-        }s)`
-      );
     }
   }, [memoizedVideoData, durationInFrames]);
 
   // Additional fallback: use a default duration if nothing else works
   useEffect(() => {
     if (!durationInFrames && isOptimized && isReady) {
-      // Default to 10 seconds if no duration can be determined
       const defaultDuration = 10 * FPS; // 10 seconds at 30fps
       setDurationInFrames(defaultDuration);
-      console.log("Using default duration:", defaultDuration, "frames");
     }
   }, [durationInFrames, isOptimized, isReady]);
-
-  // Handle retry with cleanup
-  const handleRetry = useCallback(() => {
-    setRetryCount((prev) => prev + 1);
-    setError(null);
-    setDurationInFrames(null);
-    setIsReady(false);
-  }, []);
 
   // Don't render until we have a duration and are ready
   if (!durationInFrames || !isReady) {
@@ -179,13 +116,6 @@ function RemotionPlayer({ videoData }) {
     );
   }
 
-  // Show warning if no valid audio URL but allow playback
-  if (!isValidAudioURL) {
-    console.warn(
-      "No valid audio URL found, but allowing video playback with captions only"
-    );
-  }
-
   // Show error state if there's an error
   if (error) {
     return (
@@ -196,7 +126,7 @@ function RemotionPlayer({ videoData }) {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full relative no-hover-glow">
       <Player
         component={RemotionComposition}
         durationInFrames={durationInFrames}
@@ -221,8 +151,7 @@ function RemotionPlayer({ videoData }) {
         // Start paused to avoid autoplay issues
         autoPlay={false}
         // Add error boundary for Remotion errors
-        onError={(error) => {
-          console.error("Remotion player error:", error);
+        onError={() => {
           setError("Video playback error. Please try again.");
         }}
         // Optimize for faster audio start
@@ -238,9 +167,45 @@ function RemotionPlayer({ videoData }) {
         showVolumeControls={true}
         allowFullscreen={true}
         clickToPlay={true}
+        // Playback speed
+        playbackRate={playbackRate}
         // Reduce unnecessary re-renders
-        key={`${memoizedVideoData?.audioURL}-${retryCount}`}
+        key={memoizedVideoData?.audioURL || "player"}
       />
+      {/* Playback speed controls - position just left of fullscreen icon */}
+      <div className="absolute bottom-8 right-10 z-10 pointer-events-none">
+        <div className="relative pointer-events-auto">
+          <button
+            type="button"
+            onClick={() => setShowSpeedMenu((v) => !v)}
+            className="size-8 flex items-center justify-center text-white bg-transparent border-0 focus:outline-none"
+            aria-label="Playback speed"
+          >
+            <Gauge className="w-5.3 h-5.3" />
+          </button>
+          {showSpeedMenu && (
+            <div className="absolute bottom-10 right-0 min-w-[84px] rounded-md backdrop-blur-sm bg-black/70 border border-gray-700 shadow-md p-1">
+              {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map((rate) => (
+                <button
+                  key={rate}
+                  type="button"
+                  onClick={() => {
+                    setPlaybackRate(rate);
+                    setShowSpeedMenu(false);
+                  }}
+                  className={`w-full text-left px-2 py-1 rounded-sm text-xs ${
+                    playbackRate === rate
+                      ? "bg-gray-700/50 text-white"
+                      : "text-gray-200 hover:bg-gray-700/40"
+                  }`}
+                >
+                  {rate}x
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

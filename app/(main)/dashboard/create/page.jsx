@@ -8,8 +8,6 @@ import Captions from "../videos/Captions";
 import { WandSparkles } from "lucide-react";
 import { Button } from "../../../../components/ui/button";
 import Preview from "../../_components/Preview";
-import SectionHeader from "@/components/ui/section-header";
-import GlassPanel from "@/components/ui/glass-panel";
 import axios from "axios";
 import { useAuthContext } from "@/app/providers";
 import { useSupabaseMutation } from "@/hooks/use-supabase";
@@ -18,6 +16,7 @@ import { useToast } from "@/components/ui/toast";
 import { FormProgress } from "@/components/ui/progress-bar";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { LoadingOverlay } from "@/components/ui/loading-overlay";
+import { Loader2 } from "lucide-react";
 
 function CreateNewVideo() {
   const [formData, setFormData] = useState({
@@ -63,52 +62,27 @@ function CreateNewVideo() {
   // Handle video download
   const handleDownload = async (videoData) => {
     if (!videoData || !videoData._id) {
-      console.error("No video data available for download");
       return;
     }
 
     setIsDownloading(true);
     try {
-      console.log("Starting video download for video ID:", videoData._id);
-
       // First, fetch the actual video data from the database
-      console.log("Fetching actual video data from database...");
       const fetchResponse = await axios.post("/api/get-video-data", {
         videoId: videoData._id,
       });
 
-      if (!fetchResponse.data.videoData) {
+      if (!fetchResponse.data.videoData)
         throw new Error("Failed to fetch video data from database");
-      }
 
       const actualVideoData = fetchResponse.data.videoData;
-      console.log("Fetched video data:", {
-        id: actualVideoData._id,
-        title: actualVideoData.title,
-        hasImages: !!actualVideoData.images,
-        imageCount: Array.isArray(actualVideoData.images)
-          ? actualVideoData.images.length
-          : 0,
-        hasAudio: !!actualVideoData.audioURL,
-        hasCaptions: !!actualVideoData.captionJson,
-      });
 
       // Check if video generation is complete
       if (actualVideoData.status !== "ready") {
-        if (actualVideoData.status === "partial") {
-          console.log(
-            "Video images are ready, but audio and captions are still being generated. Please wait a few more minutes and try again."
-          );
-        } else {
-          console.log(
-            "Video generation is still in progress. Please wait a few minutes and try again."
-          );
-        }
         return;
       }
 
       // Now export the video with the actual data
-      console.log("Starting video export with actual data...");
       const response = await axios.post(
         "/api/export-video",
         {
@@ -139,41 +113,15 @@ function CreateNewVideo() {
       } else {
         // Handle error response
         const reader = new FileReader();
-        reader.onload = () => {
-          try {
-            const errorData = JSON.parse(reader.result);
-            console.error(
-              `Download failed: ${errorData.error || "Unknown error"}`
-            );
-          } catch {
-            console.error("Download failed: Invalid response from server");
-          }
-        };
+        reader.onload = () => {};
         reader.readAsText(response.data);
       }
     } catch (error) {
-      console.error("Download failed:", error);
-
       if (error.response?.data) {
         // Try to read error details from blob response
         const reader = new FileReader();
-        reader.onload = () => {
-          try {
-            const errorData = JSON.parse(reader.result);
-            console.error(
-              `Download failed: ${
-                errorData.error || "Unknown error"
-              }\n\nDetails: ${errorData.details || "No additional details"}`
-            );
-          } catch {
-            console.error(
-              `Download failed: ${error.message || "Unknown error"}`
-            );
-          }
-        };
+        reader.onload = () => {};
         reader.readAsText(error.response.data);
-      } else {
-        console.error(`Download failed: ${error.message || "Unknown error"}`);
       }
     } finally {
       setIsDownloading(false);
@@ -191,164 +139,89 @@ function CreateNewVideo() {
       formData?.caption?.style?.trim()
     );
 
-    console.log("Form completion check:", {
-      title: !!formData?.title?.trim(),
-      topic: !!formData?.topic?.trim(),
-      script: !!formData?.script?.trim(),
-      videoStyle: !!formData?.videoStyle?.trim(),
-      voice: !!formData?.voice?.trim(),
-      caption: !!formData?.caption?.style?.trim(),
-      isComplete,
-      rawCaption: formData?.caption,
-    });
-
     return isComplete;
   };
 
-  useEffect(() => {
-    console.log("FormData changed:", formData);
-    console.log("Form completion status:", isFormComplete());
-  }, [formData]);
+  useEffect(() => {}, [formData]);
 
   const GenerateVideo = async () => {
-    console.log("🎬 GenerateVideo function called");
-    console.log("Current form data:", formData);
-    console.log("Form complete:", isFormComplete());
-
     // Check if user exists and has required properties
     if (!user) {
-      console.error("User not logged in");
       return;
     }
 
     // Check if user has a valid ID
     if (!user._id || typeof user._id !== "string" || user._id.trim() === "") {
-      console.error("Invalid user object:", user);
       return;
     }
 
     // Additional validation for Supabase UUID format
     if (!user._id || user._id.length < 20) {
-      console.error("Invalid Supabase UUID format:", user._id);
       return;
     }
 
-    console.log("User object:", user);
-    console.log("User ID validation:", {
-      exists: !!user._id,
-      type: typeof user._id,
-      value: user._id,
-      length: user._id?.length,
-      format: user._id?.length >= 20 ? "Valid Supabase UUID" : "Invalid format",
-    });
-
-    console.log("Form data validation:", {
-      title: !!formData?.title,
-      topic: !!formData?.topic,
-      script: !!formData?.script,
-      videoStyle: !!formData?.videoStyle,
-      caption: !!formData?.caption,
-      voice: !!formData?.voice,
-    });
-
-    console.log("🔍 Validating form fields...");
-
     if (!formData?.title?.trim()) {
       addToast("Please enter a video title", "error");
-      console.error("❌ Video title is required");
-      console.error("Title value:", formData?.title);
       return;
     }
 
     if (!formData?.topic?.trim()) {
       addToast("Please enter a topic", "error");
-      console.error("❌ Topic is required");
-      console.error("Topic value:", formData?.topic);
       return;
     }
 
     if (!formData?.script?.trim()) {
       addToast("Please enter a script", "error");
-      console.error("❌ Script is required");
-      console.error("Script value:", formData?.script);
       return;
     }
 
     if (!formData?.videoStyle?.trim()) {
       addToast("Please select a video style", "error");
-      console.error("❌ Video style is required");
-      console.error("Video style value:", formData?.videoStyle);
       return;
     }
 
     if (!formData?.voice?.trim()) {
       addToast("Please select a voice", "error");
-      console.error("❌ Voice is required");
-      console.error("Voice value:", formData?.voice);
       return;
     }
 
     if (!formData?.caption?.style?.trim()) {
       addToast("Please select a caption style", "error");
-      console.error("❌ Caption style is required");
-      console.error("Caption data:", formData?.caption);
       return;
     }
 
-    console.log("✅ All form fields validated successfully");
-
     try {
-      console.log("🚀 Starting video generation process...");
       const userId = user._id;
 
       if (!userId) {
-        console.error("User ID not found. User object:", user);
         return;
       }
 
       // Additional validation for userId
-      if (typeof userId !== "string" || userId.trim() === "") {
-        console.error("Invalid user ID format:", {
-          userId,
-          type: typeof userId,
-        });
-        return;
-      }
-
-      console.log("🔄 Starting video creation process...");
-      console.log("📋 Form data:", formData);
-      console.log("👤 User ID:", userId);
-      console.log("👤 User ID type:", typeof userId);
-      console.log("👤 User ID length:", userId.length);
+      if (typeof userId !== "string" || userId.trim() === "") return;
 
       // Validate form data is not empty
       if (!formData.title?.trim()) {
-        console.error("Please enter a video title");
         return;
       }
 
       if (!formData.topic?.trim()) {
-        console.error("Please enter a topic");
         return;
       }
 
       if (!formData.script?.trim()) {
-        console.error("Please enter a script");
         return;
       }
 
       if (!formData.videoStyle?.trim()) {
-        console.error("Please select a video style");
         return;
       }
 
       if (!formData.voice?.trim()) {
-        console.error("Please select a voice");
         return;
       }
 
       // First, create the video record in Supabase
-      console.log("📝 Creating initial video record in Supabase...");
       const videoRecordId = await CreateVideoData({
         title: formData.title.trim(),
         topic: formData.topic.trim(),
@@ -370,25 +243,6 @@ function CreateNewVideo() {
         ).trim(),
       });
 
-      console.log("✅ Supabase video record created with ID:", videoRecordId);
-
-      // Check if the record was actually created by querying it back
-      console.log("🔍 Verifying record creation...");
-
-      // Then send the video generation request to Inngest WITH the video record ID
-      console.log("🚀 Triggering Inngest video generation...");
-      console.log("📤 Data being sent to API:", {
-        title: formData.title,
-        topic: formData.topic,
-        script: formData.script,
-        videoStyle: formData.videoStyle,
-        voice: formData.voice,
-        caption: formData.caption,
-        videoRecordId: videoRecordId,
-        userId: userId,
-        userEmail: user?.email || user?.name || user?.displayName || "unknown",
-      });
-
       const result = await axios.post("/api/generate-video-data", {
         ...formData,
         videoRecordId: videoRecordId, // Pass the Supabase record ID
@@ -396,11 +250,8 @@ function CreateNewVideo() {
         userEmail: user?.email || user?.name || user?.displayName || "unknown",
       });
 
-      console.log("✅ Video generation response:", result.data);
-
       // Store the generated video data for download
       // Note: This is just the metadata, the actual video generation happens in the background
-      console.log("💾 Storing generated video data...");
       setGeneratedVideoData({
         _id: videoRecordId,
         images: formData.images || [],
@@ -417,19 +268,9 @@ function CreateNewVideo() {
       addToast("Video generation started! Redirecting...", "success", 1500);
 
       // Redirect to videos page immediately after successful generation
-      console.log("🚀 Redirecting to videos page...");
-
       // Use replace for instant navigation (no back button)
       router.replace("/dashboard/videos", { scroll: false });
     } catch (error) {
-      console.error("❌ Error generating video:", error);
-      console.error("❌ Error details:", {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-        stack: error.stack,
-      });
-
       // Show error toast
       addToast(
         `Video generation failed: ${
@@ -437,81 +278,120 @@ function CreateNewVideo() {
         }`,
         "error"
       );
-
-      // Log detailed error information
-      if (error.response?.data?.error) {
-        console.error(
-          `❌ API Error: ${error.response.data.error}\n\nDetails: ${
-            error.response.data.details || "No additional details"
-          }`
-        );
-      } else if (error?.message?.includes("ArgumentValidationError")) {
-        console.error("Validation error details:", {
-          userObject: user,
-          userId: user?._id,
-          userType: typeof user?._id,
-        });
-        console.error(
-          "User validation error. Please check the console for details."
-        );
-      } else {
-        console.error(
-          `Failed to generate video: ${error.message}\n\nCheck console for details.`
-        );
-      }
     }
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="space-y-8">
-        <SectionHeader
-          title="Create New Video"
-          subtitle="Describe your idea, pick a style and voice, and generate a polished short."
-        />
+    <div className="min-h-screen bg-black">
+      <div className="w-full px-2 sm:px-4 lg:px-6 py-6">
+        {/* Simple Page Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-purple-400">
+            Create New Video
+          </h1>
+          <p className="text-purple-200 text-sm mt-1">
+            Transform your ideas into captivating short videos
+          </p>
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Form Section */}
-          <GlassPanel className="lg:col-span-2 p-6 lg:p-8">
-            <div className="space-y-8">
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+          {/* Left Column - Main Form */}
+          <div className="xl:col-span-3 space-y-6">
+            {/* Project Title Card */}
+            <div className="bg-black rounded-xl border border-gray-800 p-6 hover:border-purple-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">1</span>
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-white">
+                    Project Details
+                  </h2>
+                  <p className="text-gray-400 text-sm">Start with the basics</p>
+                </div>
+              </div>
               <Topic
                 onHandleInputChange={onHandleInputChange}
                 currentTopic={formData?.topic}
               />
+            </div>
+
+            {/* Video Style Card */}
+            <div className="bg-black rounded-xl border border-gray-800 p-6 hover:border-purple-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">2</span>
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-white">Visual Style</h2>
+                  <p className="text-gray-400 text-sm">Choose your aesthetic</p>
+                </div>
+              </div>
               <VideoStyle
                 onHandleInputChange={onHandleInputChange}
                 videoData={generatedVideoData}
                 onDownload={handleDownload}
               />
-              <Voice onHandleInputChange={onHandleInputChange} />
-              <Captions onHandleInputChange={onHandleInputChange} />
+            </div>
 
-              {/* Generate Button Section */}
-              <div className="pt-4 border-t border-border/50">
-                <Button
-                  className="w-full h-12 text-lg font-semibold"
-                  onClick={GenerateVideo}
-                  disabled={!isFormComplete() || createVideoLoading}
-                >
-                  <WandSparkles className="mr-3 w-5 h-5" />
-                  {createVideoLoading ? "Generating..." : "Generate Video"}
-                  {!isFormComplete() && (
-                    <span className="ml-2 text-sm opacity-75">
-                      (Form Incomplete)
-                    </span>
-                  )}
-                </Button>
-                <p className="text-sm text-muted-foreground text-center mt-3">
-                  💡 Tip: Press Ctrl+Enter to generate video
-                </p>
+            {/* Voice & Captions Card */}
+            <div className="bg-black rounded-xl border border-gray-800 p-6 hover:border-purple-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">3</span>
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-white">Audio & Text</h2>
+                  <p className="text-gray-400 text-sm">
+                    Bring your story to life
+                  </p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Voice onHandleInputChange={onHandleInputChange} />
+                <Captions onHandleInputChange={onHandleInputChange} />
               </div>
             </div>
-          </GlassPanel>
 
-          {/* Sidebar Preview Section */}
-          <GlassPanel className="p-6 lg:p-8 h-fit">
-            <div className="space-y-6">
+            {/* Generate Video Button */}
+            <div className="pt-2">
+              <Button
+                className="w-full h-12 text-base font-semibold bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                onClick={GenerateVideo}
+                disabled={!isFormComplete() || createVideoLoading}
+              >
+                {createVideoLoading ? (
+                  <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                ) : (
+                  <WandSparkles className="mr-2 h-4 w-4" />
+                )}
+                Generate Video
+              </Button>
+            </div>
+          </div>
+
+          {/* Right Column - Progress & Preview */}
+          <div className="xl:col-span-1 space-y-4">
+            {/* Progress Card */}
+            <div className="bg-black rounded-xl border border-gray-800 p-4 sticky top-8 hover:border-purple-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-6 h-6 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-semibold text-xs">📊</span>
+                </div>
+                <h3 className="text-base font-semibold text-white">Progress</h3>
+              </div>
               <FormProgress formData={formData} />
+            </div>
+
+            {/* Preview Card */}
+            <div className="bg-black rounded-xl border border-gray-800 p-4 hover:border-purple-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-6 h-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-semibold text-xs">🎬</span>
+                </div>
+                <h3 className="text-base font-semibold text-white">Preview</h3>
+              </div>
               <Preview
                 videoUrl={formData?.previewUrl}
                 placeholderImageUrl={
@@ -522,11 +402,11 @@ function CreateNewVideo() {
                 selectedVideoStyle={formData?.videoStyle}
                 selectedCaption={formData?.caption?.style}
               />
-              <p className="text-sm text-muted-foreground text-center">
-                Your rendered preview will appear here once ready.
+              <p className="text-gray-400 text-sm text-center mt-3">
+                Your rendered preview will appear here once ready
               </p>
             </div>
-          </GlassPanel>
+          </div>
         </div>
       </div>
 
