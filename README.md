@@ -172,5 +172,7 @@ npm run dev
 npx inngest-cli@latest dev
 ```
 ![op1](op1.png)
+---
 ![op2](op2.png)
+---
 ![op1](op3.png)
