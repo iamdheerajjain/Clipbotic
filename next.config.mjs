@@ -167,3 +167,5 @@ const nextConfig = {
 };
 
 export default nextConfig;
+
+// Trigger rebuild timestamp: 2025-12-25

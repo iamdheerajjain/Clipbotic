@@ -30,7 +30,7 @@ export async function POST(req) {
     if (
       videoData.images &&
       videoData.images.length > 0 &&
-      (videoData.audioURL || videoData.captionJson)
+      (videoData.audio_url || videoData.caption_json)
     ) {
       status = "ready";
     } else if (videoData.images && videoData.images.length > 0) {
@@ -42,8 +42,8 @@ export async function POST(req) {
       status,
       isReady: status === "ready",
       hasImages: !!(videoData.images && videoData.images.length > 0),
-      hasAudio: !!videoData.audioURL,
-      hasCaptions: !!videoData.captionJson,
+      hasAudio: !!videoData.audio_url,
+      hasCaptions: !!videoData.caption_json,
     };
 
     console.log("Video data fetched successfully:", {

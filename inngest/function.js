@@ -149,11 +149,6 @@ export const GenerateVideoData = inngest.createFunction(
           try {
             console.log("=== Updating Supabase Database ===");
             console.log("Video Record ID:", videoRecordId);
-            console.log("GenerateImages count:", GenerateImages?.length || 0);
-            console.log(
-              "GenerateCaptions count:",
-              GenerateCaptions?.length || 0
-            );
 
             if (!videoRecordId) {
               throw new Error("videoRecordId is required but was not provided");
@@ -172,38 +167,20 @@ export const GenerateVideoData = inngest.createFunction(
             };
 
             if (GenerateImages && GenerateImages.length > 0) {
-              updateData.images = JSON.stringify(GenerateImages);
-              console.log(`Adding ${GenerateImages.length} images to update`);
+              updateData.images = GenerateImages;
             }
 
             if (GenerateCaptions && GenerateCaptions.length > 0) {
-              updateData.captionJson = JSON.stringify(GenerateCaptions);
-              console.log(
-                `Adding ${GenerateCaptions.length} captions to update`
-              );
+              updateData.captionJson = GenerateCaptions;
             }
 
-            console.log("Update data being sent:", updateData);
-
+            // Use the regular Supabase service
             const result = await supabaseService.updateVideoData(updateData);
 
-            if (!result) {
-              throw new Error("UpdateVideoData returned null");
-            }
-
-            console.log("Database updated successfully, result:", result);
+            console.log("Database updated successfully:", result.id);
             return result;
           } catch (err) {
             console.error("Database update failed:", err);
-            console.error("Error details:", {
-              message: err.message,
-              stack: err.stack,
-              videoRecordId,
-              videoRecordIdType: typeof videoRecordId,
-              audioURL: extractAudioURL(GenerateAudioFile),
-              imagesCount: GenerateImages?.length || 0,
-              captionsCount: GenerateCaptions?.length || 0,
-            });
             throw new Error(`Database update failed: ${err.message}`);
           }
         }

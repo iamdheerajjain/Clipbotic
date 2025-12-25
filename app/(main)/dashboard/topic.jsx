@@ -6,6 +6,7 @@ import React, { useState, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2Icon, Sparkles, FileText } from "lucide-react";
 import axios from "axios";
+import { useToast } from "@/components/ui/toast";
 
 const suggestions = [
   "History Story",
@@ -36,9 +37,13 @@ function Topic({ onHandleInputChange, currentTopic = "" }) {
     }
   }, [currentTopic, selectTopic]);
 
+  // Add toast hook
+  const { addToast } = useToast();
+
   const GenerateScript = async () => {
     setLoading(true);
     setSelectedScriptIndex(null);
+    setScripts([]); // Clear previous scripts
 
     try {
       const topic = customTopic || selectTopic;
@@ -50,7 +55,19 @@ function Topic({ onHandleInputChange, currentTopic = "" }) {
       const result = await axios.post("/api/generate-script", { topic });
       setScripts(result.data?.scripts || []);
     } catch (error) {
-      // Silent failure
+      console.error("GenerateScript error:", error);
+      
+      const errorMessage = error.response?.data?.error || "Failed to generate script";
+      const status = error.response?.status;
+      
+      if (status === 429) {
+        addToast(
+          "Rate Limit Exceeded. Please wait a moment before trying again.", 
+          "error"
+        );
+      } else {
+        addToast(errorMessage, "error");
+      }
     } finally {
       setLoading(false);
     }
